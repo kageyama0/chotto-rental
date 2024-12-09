@@ -1,23 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/kageyama0/chotto-rental/internal/auth"
+	"github.com/kageyama0/chotto-rental/internal/handler"
+	"github.com/kageyama0/chotto-rental/internal/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func init() {
-    godotenv.Load()
-}
-
 func initDB() *gorm.DB {
-	dsn := os.Getenv("DATABASE_URL")
-	fmt.Println(dsn)
+	dsn := os.Getenv("DEV_DATABASE_URL")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -25,57 +22,69 @@ func initDB() *gorm.DB {
 	return db
 }
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Printf("No .env file found")
+	}
+}
+
 func setupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
+	authService := auth.NewAuthService(os.Getenv("JWT_SECRET"))
+	applicationHandler := handler.NewApplicationHandler(db)
+	authHandler := handler.NewAuthHandler(db, authService)
+	caseHandler := handler.NewCaseHandler(db)
+	matchingHandler := handler.NewMatchingHandler(db)
+	reviewHandler := handler.NewReviewHandler(db)
+	userHandler := handler.NewUserHandler(db)
 
-	// ヘルスチェック
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	// API グループ
 	api := r.Group("/api")
 	{
-		// ユーザー関連
-		users := api.Group("/users")
-		{
-			users.POST("/register", nil) // TODO
-			users.POST("/login", nil)    // TODO
-		}
+		// 認証不要のエンドポイント
+		api.POST("/register", authHandler.Register)
+		api.POST("/login", authHandler.Login)
 
 		// 認証が必要なエンドポイント
-		auth := api.Group("/")
+		auth := api.Group("", middleware.AuthMiddleware(authService))
 		{
-			// 案件関連
+			users := auth.Group("/users")
+			{
+				users.GET("/:id", userHandler.Get)
+				users.PUT("/:id", userHandler.Update)
+				users.DELETE("/:id", userHandler.Delete)
+				users.GET("/:id/reviews", userHandler.GetReviews)
+			}
+
 			cases := auth.Group("/cases")
 			{
-				cases.GET("", nil)          // 一覧取得
-				cases.POST("", nil)         // 作成
-				cases.GET("/:id", nil)      // 詳細取得
-				cases.PUT("/:id", nil)      // 更新
-				cases.DELETE("/:id", nil)   // 削除
+				cases.POST("", caseHandler.Create)
+				cases.GET("", caseHandler.List)
+				cases.GET("/:id", caseHandler.Get)
+				cases.PUT("/:id", caseHandler.Update)
+				cases.DELETE("/:id", caseHandler.Delete)
 			}
 
-			// 応募関連
 			applications := auth.Group("/applications")
 			{
-				applications.POST("", nil)      // 応募する
-				applications.GET("", nil)       // 応募一覧取得
-				applications.PUT("/:id", nil)   // 応募ステータス更新
+				applications.POST("", applicationHandler.Create)
+				applications.GET("", applicationHandler.List)
+				applications.PUT("/:id/status", applicationHandler.UpdateStatus)
 			}
 
-			// マッチング関連
 			matchings := auth.Group("/matchings")
 			{
-				matchings.POST("", nil)                     // マッチング作成
-				matchings.PUT("/:id/confirm-arrival", nil)  // 到着確認
+				matchings.POST("", matchingHandler.Create)
+				matchings.POST("/:id/confirm-arrival", matchingHandler.ConfirmArrival)
 			}
 
-			// レビュー関連
 			reviews := auth.Group("/reviews")
 			{
-				reviews.POST("", nil)      // レビュー投稿
-				reviews.GET("", nil)       // レビュー一覧取得
+				reviews.POST("", reviewHandler.Create)
+				reviews.GET("", reviewHandler.List)
 			}
 		}
 	}
@@ -86,5 +95,9 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 func main() {
 	db := initDB()
 	r := setupRouter(db)
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 }

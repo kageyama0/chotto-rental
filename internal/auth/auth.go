@@ -9,7 +9,7 @@ import (
 
 type Claims struct {
 	UserID string `json:"user_id"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 type AuthService struct {
@@ -35,8 +35,8 @@ func (s *AuthService) CheckPassword(password, hash string) bool {
 func (s *AuthService) GenerateToken(userID string) (string, error) {
 	claims := &Claims{
 		UserID: userID,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
 	}
 
