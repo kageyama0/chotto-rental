@@ -4,28 +4,62 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
+	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
+// -- deleteParams: Delete関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
+func deleteParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode int) {
+	// パラメータの取得
+	cCaseID := c.Param("id")
+	caseID, isValid := util.CheckUUID(c, cCaseID)
+	if !isValid {
+		return nil, nil, e.INVALID_ID
+	}
+
+	// ユーザーIDの取得
+	cUserID, _ := c.Get("userID")
+	userID, isValid = util.CheckUUID(c, cUserID.(string))
+	if !isValid {
+		return nil, nil, e.INVALID_ID
+	}
+
+	return caseID, userID, e.OK
+}
+
+
+// -- Delete: 案件を削除します。
 func (h *CaseHandler) Delete(c *gin.Context) {
-	id := c.Param("id")
-	var caseData model.Case
+	var caseData *model.Case
+	caseRepository := case_repository.NewCaseRepository(h.db)
 
-	if err := h.db.First(&caseData, "id = ?", id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "案件が見つかりません"})
+	// パラメータの取得
+	caseId, userID, errCode := deleteParams(c)
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
-	userID, _ := c.Get("userID")
-	if caseData.UserID.String() != userID.(string) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "この操作を行う権限がありません"})
+	// 案件の取得
+	caseData, err := caseRepository.FindByID(caseId)
+	if err != nil {
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_CASE, nil)
 		return
 	}
 
-	if err := h.db.Delete(&caseData).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "案件の削除に失敗しました"})
-		return
+	// ユーザーが案件の作成者であるかを確認
+	if caseData.UserID != *userID {
+		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN_DELETE_CASE, nil)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "案件を削除しました"})
+	//  案件の削除
+	err = caseRepository.DeleteByID(*caseId)
+	if err != nil {
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
+		return
+	}
+	util.CreateResponse(c, http.StatusNoContent, e.NO_CONTENT, nil)
 }

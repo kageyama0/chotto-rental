@@ -64,7 +64,7 @@ func (h *ApplicationHandler) Create(c *gin.Context) {
 
 	// 案件の取得
 	var caseData *model.Case
-	caseData, err := caseRepository.FindByID(*caseID)
+	caseData, err := caseRepository.FindByID(caseID)
 	if err != nil {
 		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_CASE, nil)
 		return

@@ -1,26 +1,39 @@
 package case_repository
 
 import (
-	"gorm.io/gorm"
-
 	"github.com/google/uuid"
-	"github.com/kageyama0/chotto-rental/internal/model"
 )
 
-type Case = model.Case
-type CaseRepository struct {
-	db *gorm.DB
-}
-
-func NewCaseRepository(db *gorm.DB) *CaseRepository {
-	return &CaseRepository{db: db}
-}
-
-// idで案件を取得
-func (r *CaseRepository) FindByID(id uuid.UUID) (*Case, error) {
+// -- FindByID: idで案件を取得
+func (r *CaseRepository) FindByID(id *uuid.UUID) (*Case, error) {
 	var c Case
 
-	if err := r.db.First(&c, "id = ?", id).Error; err != nil {
+	err := r.db.First(&c, "id = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
+}
+
+
+// -- FindAll: すべての案件を取得
+func (r *CaseRepository) FindAll() ([]Case, error){
+	var cases []Case
+
+	err := r.db.Preload("User").Find(&cases).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return cases, nil
+}
+
+// -- FindByIdWithUser: idで案件を取得し、ユーザー情報も取得
+func (r *CaseRepository) FindByIDWithUser(id *uuid.UUID) (*Case, error) {
+	var c Case
+
+	if err := r.db.Preload("User").First(&c, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 

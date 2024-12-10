@@ -7,6 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
+	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 type CreateCaseRequest struct {
@@ -18,22 +21,42 @@ type CreateCaseRequest struct {
 	DurationMinutes int      `json:"duration_minutes" binding:"required,min=1"`
 }
 
+
+// -- createParams: Create関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
+func createParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
+	var req CreateCaseRequest
+
+	// リクエストのパース
+	if err := c.ShouldBindJSON(&req); err != nil {
+		return nil, e.JSON_PARSE_ERROR
+	}
+
+	// ユーザーIDの取得
+	cUserID, _ := c.Get("userID")
+	userID, isValid := util.CheckUUID(c, cUserID.(string))
+	if !isValid {
+		return nil, e.INVALID_ID
+	}
+
+	return userID, e.OK
+}
+
+
+// Create: 案件を作成します。
 func (h *CaseHandler) Create(c *gin.Context) {
 	var req CreateCaseRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	caseRepository := case_repository.NewCaseRepository(h.db)
+
+	// パラメータの取得
+	userID, errCode := createParams(c)
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
-	userID, _ := c.Get("userID")
-	uid, err := uuid.Parse(userID.(string))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "無効なユーザーID"})
-		return
-	}
-
+	// 案件の作成
 	caseData := model.Case{
-		UserID:         uid,
+		UserID:         *userID,
 		Title:          req.Title,
 		Description:    req.Description,
 		Reward:         req.Reward,
@@ -42,11 +65,13 @@ func (h *CaseHandler) Create(c *gin.Context) {
 		DurationMinutes: req.DurationMinutes,
 		Status:         "open",
 	}
-
-	if result := h.db.Create(&caseData); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "案件の作成に失敗しました"})
+	err := caseRepository.Create(&caseData)
+	if err != nil {
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
-	c.JSON(http.StatusCreated, caseData)
+	util.CreateResponse(c, http.StatusCreated, e.OK, map[string]interface{}{
+		"case": caseData,
+	})
 }

@@ -14,7 +14,7 @@ type UpdateApplicationStatusRequest struct {
 	Status string `json:"status" binding:"required,oneof=accepted rejected"`
 }
 
-
+// -- updateStatusParams: UpdateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
 func updateStatusParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
 	var req UpdateApplicationStatusRequest
 
@@ -37,6 +37,8 @@ func updateStatusParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.
 	return applicationID, userID, e.OK
 }
 
+
+// -- UpdateStatus; 応募のステータスを更新します。
 func (h *ApplicationHandler) UpdateStatus(c *gin.Context) {
 	var req UpdateApplicationStatusRequest
 
@@ -47,19 +49,23 @@ func (h *ApplicationHandler) UpdateStatus(c *gin.Context) {
 		return
 	}
 
+	// 応募の取得
 	application, err := applicationRepository.FindByIDWithCase(applicationID)
 	if err != nil {
 		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_APPLICATION, nil)
 		return
 	}
 
+	// 案件の作成者であるかを確認
 	if application.Case.UserID != *userID {
-		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN_UPDATE_CASE, nil)
+		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN_UPDATE_APPLICATION, nil)
 		return
 	}
 
+	// ステータスの更新
 	application.Status = req.Status
-	if err := h.db.Save(&application).Error; err != nil {
+	err = applicationRepository.Update(&application)
+	if err != nil {
 		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}

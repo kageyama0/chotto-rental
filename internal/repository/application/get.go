@@ -2,12 +2,11 @@ package application_repository
 
 import (
 	"github.com/google/uuid"
-	"github.com/kageyama0/chotto-rental/internal/model"
 )
 
 // あるユーザーが、ある案件に応募しているかどうかを調べる
-func (r *ApplicationRepository) FindByCaseIDAndApplicantID(caseID uuid.UUID, applicantID uuid.UUID) (model.Application, error) {
-	var application model.Application
+func (r *ApplicationRepository) FindByCaseIDAndApplicantID(caseID uuid.UUID, applicantID uuid.UUID) (Application, error) {
+	var application Application
 
 	if err := r.db.First(&application, "case_id = ? AND applicant_id = ?", caseID, applicantID).Error; err != nil {
 		return application, err
@@ -17,8 +16,8 @@ func (r *ApplicationRepository) FindByCaseIDAndApplicantID(caseID uuid.UUID, app
 }
 
 // 応募のIDを使用して、案件を紐づけた応募を取得する
-func (r *ApplicationRepository) FindByIDWithCase(id *uuid.UUID) (model.Application, error) {
-	var application model.Application
+func (r *ApplicationRepository) FindByIDWithCase(id *uuid.UUID) (Application, error) {
+	var application Application
 
 	err := r.db.Preload("Case").First(&application, "id = ?", id).Error
 
@@ -30,8 +29,8 @@ func (r *ApplicationRepository) FindByIDWithCase(id *uuid.UUID) (model.Applicati
 }
 
 // すべての応募とそれに紐づく案件を取得する
-func (r *ApplicationRepository) FindAllByIDWithCase(userID *uuid.UUID) ([]model.Application, error) {
-	var applications []model.Application
+func (r *ApplicationRepository) FindAllByIDWithCase(userID *uuid.UUID) ([]Application, error) {
+	var applications []Application
 
 	err := r.db.Preload("Case").Find(&applications, "applicant_id = ?", userID).Error
 

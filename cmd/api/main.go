@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/kageyama0/chotto-rental/internal/model"
+	// "github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/internal/router"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	// "gorm.io/gorm/logger"
 )
 
 func initDB() *gorm.DB {
@@ -32,8 +32,11 @@ func initDB() *gorm.DB {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	db.Config.Logger = logger.Default.LogMode(logger.Info)
-	model.Migrate(db)
+	// ログを出したい時だけでいいので、コメントアウト
+	// db.Config.Logger = logger.Default.LogMode(logger.Info)
+
+	// マイグレーションは、必要な時だけでいいので、一旦コメントアウト
+	// model.Migrate(db)
 
 	return db
 }

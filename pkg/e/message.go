@@ -14,7 +14,8 @@ var MsgFlags = map[int]string{
 
 	// 403系エラーメッセージ
 	FORBIDDEN:                       "403.この操作を行う権限がありません",
-	FORBIDDEN_UPDATE_CASE:           "403.他のユーザーの案件を編集する権限がありません",
+	FORBIDDEN_UPDATE_APPLICATION:    "403.この応募のステータスを更新する権限がありません",
+	FORBIDDEN_DELETE_CASE:           "403.この案件を削除する権限がありません",
 
 
 	// 404系エラーメッセージ
