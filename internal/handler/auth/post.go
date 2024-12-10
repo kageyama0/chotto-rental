@@ -1,25 +1,11 @@
-package handler
+package auth_handler
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kageyama0/chotto-rental/pkg/auth"
 	"github.com/kageyama0/chotto-rental/internal/model"
-	"gorm.io/gorm"
 )
-
-type AuthHandler struct {
-	db          *gorm.DB
-	authService *auth.AuthService
-}
-
-func NewAuthHandler(db *gorm.DB, authService *auth.AuthService) *AuthHandler {
-	return &AuthHandler{
-		db:          db,
-		authService: authService,
-	}
-}
 
 type RegisterRequest struct {
 	Email       string `json:"email" binding:"required,email"`
@@ -27,16 +13,13 @@ type RegisterRequest struct {
 	DisplayName string `json:"display_name" binding:"required"`
 }
 
-/**
- * @api {post} /auth/register ユーザー登録
- * @apiName Register
- * @apiGroup Auth
- *
- * @apiParam {String} email メールアドレス
- * @apiParam {String} password パスワード
- * @apiParam {String} display_name 表示名
- *
-**/
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+
+
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -88,21 +71,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	})
 }
 
-type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
 
-
-/**
- * @api {post} /auth/login ログイン
- * @apiName Login
- * @apiGroup Auth
-
- * @apiParam {String} email メールアドレス
- * @apiParam {String} password パスワード
- *
-**/
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

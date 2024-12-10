@@ -7,7 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/kageyama0/chotto-rental/internal/handler"
+	application_handler "github.com/kageyama0/chotto-rental/internal/handler/application"
+	auth_handler "github.com/kageyama0/chotto-rental/internal/handler/auth"
+	case_handler "github.com/kageyama0/chotto-rental/internal/handler/case"
+	matching_handler "github.com/kageyama0/chotto-rental/internal/handler/matching"
+	review_handler "github.com/kageyama0/chotto-rental/internal/handler/review"
+	user_handler "github.com/kageyama0/chotto-rental/internal/handler/user"
 	"github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/pkg/auth"
 	"github.com/kageyama0/chotto-rental/pkg/middleware"
@@ -51,12 +56,12 @@ func init() {
 func setupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 	authService := auth.NewAuthService(os.Getenv("JWT_SECRET"))
-	applicationHandler := handler.NewApplicationHandler(db)
-	authHandler := handler.NewAuthHandler(db, authService)
-	caseHandler := handler.NewCaseHandler(db)
-	matchingHandler := handler.NewMatchingHandler(db)
-	reviewHandler := handler.NewReviewHandler(db)
-	userHandler := handler.NewUserHandler(db)
+	applicationHandler := application_handler.NewApplicationHandler(db)
+	authHandler := auth_handler.NewAuthHandler(db, authService)
+	caseHandler := case_handler.NewCaseHandler(db)
+	matchingHandler := matching_handler.NewMatchingHandler(db)
+	reviewHandler := review_handler.NewReviewHandler(db)
+	userHandler := user_handler.NewUserHandler(db)
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})

@@ -1,20 +1,12 @@
-package handler
+package review_handler
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
-	"gorm.io/gorm"
 )
-
-type ReviewHandler struct {
-	db *gorm.DB
-}
-
-func NewReviewHandler(db *gorm.DB) *ReviewHandler {
-	return &ReviewHandler{db: db}
-}
 
 type CreateReviewRequest struct {
 	MatchingID     string `json:"matching_id" binding:"required"`
@@ -84,36 +76,4 @@ func (h *ReviewHandler) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, review)
-}
-
-func (h *ReviewHandler) updateUserTrustScore(userID uuid.UUID) error {
-	var averageScore float64
-	err := h.db.Model(&model.Review{}).
-		Where("reviewed_user_id = ?", userID).
-		Select("COALESCE(AVG(score), 1.0)").
-		Scan(&averageScore).Error
-	if err != nil {
-		return err
-	}
-
-	return h.db.Model(&model.User{}).
-		Where("id = ?", userID).
-		Update("trust_score", averageScore).Error
-}
-
-func (h *ReviewHandler) List(c *gin.Context) {
-	userID := c.Query("user_id")
-	var reviews []model.Review
-
-	query := h.db.Preload("Reviewer").Preload("ReviewedUser").Preload("Matching")
-	if userID != "" {
-		query = query.Where("reviewed_user_id = ?", userID)
-	}
-
-	if err := query.Find(&reviews).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "レビューの取得に失敗しました"})
-		return
-	}
-
-	c.JSON(http.StatusOK, reviews)
 }
