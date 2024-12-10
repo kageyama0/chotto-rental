@@ -6,15 +6,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/kageyama0/chotto-rental/internal/auth"
+	"github.com/kageyama0/chotto-rental/pkg/auth"
 	"github.com/kageyama0/chotto-rental/internal/handler"
-	"github.com/kageyama0/chotto-rental/internal/middleware"
+	"github.com/kageyama0/chotto-rental/pkg/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func initDB() *gorm.DB {
-	dsn := os.Getenv("DEV_DATABASE_URL")
+	dsn := os.Getenv("DATABASE_URL")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
