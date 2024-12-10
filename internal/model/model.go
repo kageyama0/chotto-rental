@@ -17,7 +17,6 @@ func Migrate(db *gorm.DB) {
 	)
 }
 
-
 type User struct {
 	gorm.Model
 	ID           uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
