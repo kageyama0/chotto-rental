@@ -2,10 +2,24 @@ package model
 
 import (
 	"time"
+
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
+func Migrate(db *gorm.DB) {
+	db.AutoMigrate(
+		&User{},
+		&Case{},
+		&Application{},
+		&Matching{},
+		&Review{},
+	)
+}
+
+
 type User struct {
+	gorm.Model
 	ID           uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Email        string    `gorm:"unique;not null"`
 	PasswordHash string    `gorm:"not null"`
@@ -17,6 +31,7 @@ type User struct {
 }
 
 type Case struct {
+	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	UserID         uuid.UUID `gorm:"not null"`
 	Title          string    `gorm:"not null"`
@@ -32,6 +47,7 @@ type Case struct {
 }
 
 type Application struct {
+	gorm.Model
 	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	CaseID      uuid.UUID `gorm:"not null"`
 	ApplicantID uuid.UUID `gorm:"not null"`
@@ -44,11 +60,12 @@ type Application struct {
 }
 
 type Matching struct {
+	gorm.Model
 	ID                          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	CaseID                      uuid.UUID `gorm:"not null"`
 	RequesterID                 uuid.UUID `gorm:"not null"`
 	HelperID                    uuid.UUID `gorm:"not null"`
-	MeetingLocation            string    `gorm:"not null"`
+	MeetingLocation             string    `gorm:"not null"`
 	ArrivalConfirmedByRequester bool      `gorm:"default:false"`
 	ArrivalConfirmedByHelper    bool      `gorm:"default:false"`
 	ArrivalConfirmationDeadline time.Time `gorm:"not null"`
@@ -61,6 +78,7 @@ type Matching struct {
 }
 
 type Review struct {
+	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	MatchingID     uuid.UUID `gorm:"not null"`
 	ReviewerID     uuid.UUID `gorm:"not null"`
