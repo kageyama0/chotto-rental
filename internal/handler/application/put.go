@@ -4,36 +4,63 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kageyama0/chotto-rental/internal/model"
+	"github.com/google/uuid"
+	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 type UpdateApplicationStatusRequest struct {
 	Status string `json:"status" binding:"required,oneof=accepted rejected"`
 }
 
-func (h *ApplicationHandler) UpdateStatus(c *gin.Context) {
-	id := c.Param("id")
+
+func updateStatusParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
 	var req UpdateApplicationStatusRequest
+
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return nil, nil, e.JSON_PARSE_ERROR
+	}
+
+	cParamsID := c.Param("id")
+	applicationID, isValid := util.CheckUUID(c, cParamsID)
+	if !isValid {
+		return nil, nil, e.INVALID_ID
+	}
+
+	cUserID, _ := c.Get("userID")
+	userID, isValid = util.CheckUUID(c, cUserID.(string))
+	if !isValid {
+		return nil, nil, e.INVALID_ID
+	}
+
+	return applicationID, userID, e.OK
+}
+
+func (h *ApplicationHandler) UpdateStatus(c *gin.Context) {
+	var req UpdateApplicationStatusRequest
+
+	applicationRepository := application_repository.NewApplicationRepository(h.db)
+	applicationID, userID, errCode := updateStatusParams(c)
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
-	var application model.Application
-	if err := h.db.Preload("Case").First(&application, "id = ?", id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "応募が見つかりません"})
+	application, err := applicationRepository.FindByIDWithCase(applicationID)
+	if err != nil {
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_APPLICATION, nil)
 		return
 	}
 
-	userID, _ := c.Get("userID")
-	if application.Case.UserID.String() != userID.(string) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "この操作を行う権限がありません"})
+	if application.Case.UserID != *userID {
+		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN_UPDATE_CASE, nil)
 		return
 	}
 
 	application.Status = req.Status
 	if err := h.db.Save(&application).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "応募状態の更新に失敗しました"})
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
