@@ -58,6 +58,7 @@ type Application struct {
 	Applicant   User      `gorm:"foreignkey:ApplicantID"`
 }
 
+
 type Matching struct {
 	gorm.Model
 	ID                          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`

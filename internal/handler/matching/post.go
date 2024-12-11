@@ -6,7 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kageyama0/chotto-rental/internal/model"
+	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
+	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
+	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 	"gorm.io/gorm"
 )
 
@@ -16,32 +20,56 @@ type CreateMatchingRequest struct {
 	MeetingLocation string `json:"meeting_location" binding:"required"`
 }
 
+
+// --CreateParams: Createのパラメータを取得する
+func createParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
+	var req CreateMatchingRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		return nil, nil, http.StatusBadRequest
+	}
+
+	applicationID, isValid := util.CheckUUID(c, req.ApplicationID)
+	if !isValid {
+		return nil, nil, http.StatusBadRequest
+	}
+
+	cUserID, _ := c.Get("userID")
+	userID, isValid = util.CheckUUID(c, cUserID.(string))
+	if !isValid {
+		return nil, nil, http.StatusBadRequest
+	}
+
+	return applicationID, userID, http.StatusOK
+}
+
+// --Create: マッチングを作成する
 func (h *MatchingHandler) Create(c *gin.Context) {
 	var req CreateMatchingRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var application Application
+	applicationRepository := application_repository.NewApplicationRepository(h.db)
+
+	// パラメータの取得
+	applicationID, userID, errCode := createParams(c)
+	if errCode != http.StatusOK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
-	applicationID, err := uuid.Parse(req.ApplicationID)
+	// 応募の取得
+	application, err := applicationRepository.FindByIDWithCase(applicationID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "無効な応募ID"})
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_CASE, nil)
 		return
 	}
 
-	var application model.Application
-	if err := h.db.Preload("Case").First(&application, "id = ?", applicationID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "応募が見つかりません"})
+	// ユーザーの権限チェック
+	if application.Case.UserID != *userID {
+		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN, nil)
 		return
 	}
 
-	userID, _ := c.Get("userID")
-	if application.Case.UserID.String() != userID.(string) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "この操作を行う権限がありません"})
-		return
-	}
-
-	matching := model.Matching{
+	matching := Matching{
 		CaseID:                      application.CaseID,
 		RequesterID:                 application.Case.UserID,
 		HelperID:                    application.ApplicantID,
@@ -50,25 +78,34 @@ func (h *MatchingHandler) Create(c *gin.Context) {
 		Status:                      "active",
 	}
 
+	// トランザクション開始
 	if err := h.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&matching).Error; err != nil {
+		matchingRepository := matching_repository.NewMatchingRepository(tx)
+		applicationRepository := application_repository.NewApplicationRepository(tx)
+		caseRepository := case_repository.NewCaseRepository(tx)
+
+		// マッチングの作成
+		if err := matchingRepository.Create(&matching); err != nil {
 			return err
 		}
 
-		if err := tx.Model(&application).Update("status", "accepted").Error; err != nil {
+		// 応募のステータスを「accepted」に更新
+		application.Status = "accepted"
+		err := applicationRepository.Update(&application)
+		if err != nil {
 			return err
 		}
 
-		if err := tx.Model(&model.Case{}).Where("id = ?", application.CaseID).Update("status", "matched").Error; err != nil {
+		// 案件のステータスを「matched」に更新
+		err = caseRepository.UpdateStatus(application.CaseID, "matched")
+		if err != nil {
 			return err
 		}
-
 		return nil
 	}); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "マッチングの作成に失敗しました"})
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
-	c.JSON(http.StatusCreated, matching)
+	util.CreateResponse(c, http.StatusCreated, e.OK, matching)
 }
-

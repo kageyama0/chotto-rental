@@ -13,6 +13,7 @@ const (
 	INVALID_ID			               = 400002
 	CASE_NOT_OPEN						       = 400003
 	ALREADY_APPLIED					       = 400004
+	OVER_CONFIRMATION_DEADLINE		 = 400005
 
 	// 401系
 	UNAUTHORIZED                   = 401

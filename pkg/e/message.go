@@ -11,6 +11,7 @@ var MsgFlags = map[int]string{
 	INVALID_ID:                      "400.無効なIDを使用しています",
 	CASE_NOT_OPEN:                   "400.この案件は募集を終了しています",
 	ALREADY_APPLIED:                 "400.既にこの案件に応募しています",
+	OVER_CONFIRMATION_DEADLINE:      "400.確認期限が過ぎています",
 
 	// 403系エラーメッセージ
 	FORBIDDEN:                       "403.この操作を行う権限がありません",
