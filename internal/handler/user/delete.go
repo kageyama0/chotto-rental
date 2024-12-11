@@ -2,38 +2,81 @@ package user_handler
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kageyama0/chotto-rental/internal/model"
+	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
+	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
+	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
+	review_repository "github.com/kageyama0/chotto-rental/internal/repository/review"
+	user_repository "github.com/kageyama0/chotto-rental/internal/repository/user"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 	"gorm.io/gorm"
 )
 
-func (h *UserHandler) Delete(c *gin.Context) {
-	userID, _ := c.Get("userID")
-	uid, _ := uuid.Parse(userID.(string))
+// -- DeleteParams: Deleteのパラメータを取得する
+func deleteParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
+	cUserID, _ := c.Get("userID")
+	userID, isValid := util.CheckUUID(c, cUserID.(string))
+	if !isValid {
+		return nil, http.StatusBadRequest
+	}
 
+	return userID, http.StatusOK
+}
+
+// -- Delete: ユーザーを削除する
+func (h *UserHandler) Delete(c *gin.Context) {
+	// パラメータの取得
+	userID, errCode := deleteParams(c)
+	if errCode != http.StatusOK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
+		return
+	}
+
+	// 関連データの削除をするため、トランザクション開始
 	if err := h.db.Transaction(func(tx *gorm.DB) error {
-		// 関連データの削除
-		if err := tx.Where("reviewer_id = ? OR reviewed_user_id = ?", uid, uid).Delete(&model.Review{}).Error; err != nil {
+		applicationRepository := application_repository.NewApplicationRepository(tx)
+		caseRepository := case_repository.NewCaseRepository(tx)
+		matchingRepository := matching_repository.NewMatchingRepository(tx)
+		reviewRepository := review_repository.NewReviewRepository(tx)
+		userRepository := user_repository.NewUserRepository(tx)
+
+		// レビューの削除
+		err := reviewRepository.DeleteByReviewerIDAndReviewedID(userID)
+		if err != nil {
 			return err
 		}
-		if err := tx.Where("requester_id = ? OR helper_id = ?", uid, uid).Delete(&model.Matching{}).Error; err != nil {
+
+		// マッチングの削除
+		err = matchingRepository.DeleteByRequesterIDAndHelperID(userID)
+		if err != nil {
 			return err
 		}
-		if err := tx.Where("applicant_id = ?", uid).Delete(&model.Application{}).Error; err != nil {
+
+		// アプリケーションの削除
+		err = applicationRepository.DeleteByUserID(userID)
+		if err != nil {
 			return err
 		}
-		if err := tx.Where("user_id = ?", uid).Delete(&model.Case{}).Error; err != nil {
+
+		// 案件の削除
+		err = caseRepository.DeleteByUserID(userID)
+		if err != nil {
 			return err
 		}
-		if err := tx.Delete(&model.User{}, "id = ?", uid).Error; err != nil {
+
+		// ユーザーの削除
+		err = userRepository.DeleteByID(userID)
+		if err != nil {
 			return err
 		}
 		return nil
 	}); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "ユーザーの削除に失敗しました"})
+		util.CreateResponse(c, http.StatusInternalServerError, http.StatusInternalServerError, nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "ユーザーを削除しました"})
+	util.CreateResponse(c, http.StatusNoContent, e.NO_CONTENT, nil)
 }

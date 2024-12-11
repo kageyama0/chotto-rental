@@ -32,7 +32,7 @@ type User struct {
 type Case struct {
 	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	UserID         uuid.UUID `gorm:"not null"`
+	UserID         uuid.UUID `gorm:"not null"` // 案件の依頼者
 	Title          string    `gorm:"not null"`
 	Description    string    `gorm:"not null"`
 	Reward         int       `gorm:"not null"`
@@ -63,8 +63,8 @@ type Matching struct {
 	gorm.Model
 	ID                          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	CaseID                      uuid.UUID `gorm:"not null"`
-	RequesterID                 uuid.UUID `gorm:"not null"`
-	HelperID                    uuid.UUID `gorm:"not null"`
+	RequesterID                 uuid.UUID `gorm:"not null"` // 案件の依頼者
+	HelperID                    uuid.UUID `gorm:"not null"` // 案件を受けたユーザー
 	MeetingLocation             string    `gorm:"not null"`
 	ArrivalConfirmedByRequester bool      `gorm:"default:false"`
 	ArrivalConfirmedByHelper    bool      `gorm:"default:false"`
@@ -81,8 +81,8 @@ type Review struct {
 	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	MatchingID     uuid.UUID `gorm:"not null"`
-	ReviewerID     uuid.UUID `gorm:"not null"`
-	ReviewedUserID uuid.UUID `gorm:"not null"`
+	ReviewerID     uuid.UUID `gorm:"not null"` // レビューを書いたユーザー
+	ReviewedUserID uuid.UUID `gorm:"not null"` // レビューを書かれたユーザー
 	Score          int       `gorm:"not null;check:score >= 1 AND score <= 5"`
 	Comment        string
 	CreatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP"`

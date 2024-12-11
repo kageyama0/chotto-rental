@@ -3,7 +3,8 @@ package e
 var MsgFlags = map[int]string{
 	// 200
 	OK:                              "200.OK",
-
+	CREATED:                         "201.Created",
+	NO_CONTENT:                      "204.No Content",
 
 	// 400系エラーメッセージ
 	BAD_REQUEST:                     "400.リクエストが不正です",

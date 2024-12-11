@@ -56,7 +56,7 @@ func (h *CaseHandler) Delete(c *gin.Context) {
 	}
 
 	//  案件の削除
-	err = caseRepository.DeleteByID(*caseId)
+	err = caseRepository.DeleteByID(caseId)
 	if err != nil {
 		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
