@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	// "github.com/kageyama0/chotto-rental/internal/model"
+	"github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/internal/router"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -36,7 +36,7 @@ func initDB() *gorm.DB {
 	// db.Config.Logger = logger.Default.LogMode(logger.Info)
 
 	// マイグレーションは、必要な時だけでいいので、一旦コメントアウト
-	// model.Migrate(db)
+	model.Migrate(db)
 
 	return db
 }
