@@ -17,6 +17,9 @@ const (
 
 	// 401系
 	UNAUTHORIZED                   = 401
+	AUTH_REQUIRED									 = 401001
+	INVALID_TOKEN                  = 401002
+	INVALID_TOKEN_FORMAT           = 401003
 
 
 	// 403系

@@ -14,6 +14,12 @@ var MsgFlags = map[int]string{
 	ALREADY_APPLIED:                 "400.既にこの案件に応募しています",
 	OVER_CONFIRMATION_DEADLINE:      "400.確認期限が過ぎています",
 
+	// 401系エラーメッセージ
+	UNAUTHORIZED:                    "401.認証エラー",
+	INVALID_TOKEN:                   "401.無効なトークンです",
+	INVALID_TOKEN_FORMAT:            "401.無効なトークンフォーマットです",
+	AUTH_REQUIRED:                   "401.認証情報が必要です",
+
 	// 403系エラーメッセージ
 	FORBIDDEN:                       "403.この操作を行う権限がありません",
 	FORBIDDEN_UPDATE_APPLICATION:    "403.この応募のステータスを更新する権限がありません",

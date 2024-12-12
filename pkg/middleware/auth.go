@@ -6,27 +6,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kageyama0/chotto-rental/pkg/auth"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 func AuthMiddleware(authService *auth.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "認証が必要です"})
+			util.CreateResponse(c, http.StatusUnauthorized, e.AUTH_REQUIRED, nil)
 			c.Abort()
 			return
 		}
 
 		bearerToken := strings.Split(authHeader, " ")
 		if len(bearerToken) != 2 {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "無効なトークンフォーマット"})
+			util.CreateResponse(c, http.StatusUnauthorized, e.INVALID_TOKEN_FORMAT, nil)
 			c.Abort()
 			return
 		}
 
 		claims, err := authService.ValidateToken(bearerToken[1])
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "無効なトークン"})
+			util.CreateResponse(c, http.StatusUnauthorized, e.INVALID_TOKEN, nil)
 			c.Abort()
 			return
 		}
