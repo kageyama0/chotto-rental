@@ -10,7 +10,9 @@
 
 
 # ローカルでの起動方法
+
+- マイグレートの行をコメントアウトする
 - 以下のコマンドを実行する
 ```
-$ go run ./cmd/api/main.go
+$ docker compose up -d --build
 ```
