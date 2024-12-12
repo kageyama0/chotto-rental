@@ -17,6 +17,8 @@ func Migrate(db *gorm.DB) {
 	)
 }
 
+// User ユーザーモデル
+// @Description ユーザー情報
 type User struct {
 	gorm.Model
 	ID           uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
@@ -29,6 +31,8 @@ type User struct {
 	UpdatedAt    time.Time `gorm:"default:CURRENT_TIMESTAMP"`
 }
 
+// Case 案件モデル
+// @Description 案件情報
 type Case struct {
 	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
@@ -45,6 +49,8 @@ type Case struct {
 	User           User      `gorm:"foreignkey:UserID"`
 }
 
+// Application 応募モデル
+// @description 応募情報
 type Application struct {
 	gorm.Model
 	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
@@ -59,6 +65,8 @@ type Application struct {
 }
 
 
+
+// @description マッチング情報
 type Matching struct {
 	gorm.Model
 	ID                          uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
@@ -77,6 +85,8 @@ type Matching struct {
 	Helper                      User      `gorm:"foreignkey:HelperID"`
 }
 
+// Review レビューモデル
+// @description レビュー情報
 type Review struct {
 	gorm.Model
 	ID             uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`

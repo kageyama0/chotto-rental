@@ -6,11 +6,12 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/internal/router"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	// "gorm.io/gorm/logger"
+	_ "github.com/kageyama0/chotto-rental/docs" // ここで docs を import
+
 )
 
 func initDB() *gorm.DB {
@@ -36,7 +37,8 @@ func initDB() *gorm.DB {
 	// db.Config.Logger = logger.Default.LogMode(logger.Info)
 
 	// マイグレーションは、必要な時だけでいいので、一旦コメントアウト
-	model.Migrate(db)
+	// TODO: 設定で変えれるようにする
+	// model.Migrate(db)
 
 	return db
 }
@@ -47,6 +49,17 @@ func init() {
 	}
 }
 
+
+// @title Chotto Rental API
+// @version 1.0
+// @description ちょっとレンタルサービスのAPI仕様書
+// @host localhost:8080
+// @BasePath /api
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description 「Bearer 」の後にJWTトークンを付与してください
+// @schemes http
 func main() {
 	db := initDB()
 	r := router.SetupRouter(db)

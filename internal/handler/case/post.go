@@ -35,7 +35,7 @@ func createParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
 	cUserID, _ := c.Get("userID")
 	userID, isValid := util.CheckUUID(c, cUserID.(string))
 	if !isValid {
-		return nil, e.INVALID_ID
+		return nil, e.INVALID_PARAMS
 	}
 
 	return userID, e.OK

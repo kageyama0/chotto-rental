@@ -17,14 +17,14 @@ func deleteParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode
 	cCaseID := c.Param("id")
 	caseID, isValid := util.CheckUUID(c, cCaseID)
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	// ユーザーIDの取得
 	cUserID, _ := c.Get("userID")
 	userID, isValid = util.CheckUUID(c, cUserID.(string))
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	return caseID, userID, e.OK

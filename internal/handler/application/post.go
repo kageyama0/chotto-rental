@@ -19,9 +19,7 @@ type CreateApplicationRequest struct {
 }
 
 
-// -- createStatusParams
-// CreateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
-// パラメータが正しくない場合は、エラーコードを返します。
+// -- createStatusParams: CreateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
 func createStatusParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode int) {
 	var req CreateApplicationRequest
 
@@ -34,22 +32,34 @@ func createStatusParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, e
 	cCaseID := req.CaseID
 	caseID, isValid := util.CheckUUID(c, cCaseID)
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	// ユーザーIDの取得
 	cUserID, _ := c.Get("userID")
 	userID, isValid = util.CheckUUID(c, cUserID.(string))
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	return caseID, userID, e.OK
 }
 
 
-// -- Create
-// 案件に対する応募を作成します。
+// @Summary 応募作成
+// @Description 案件への新規応募を作成します
+// @Tags 応募
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {token} 形式"
+// @Param case_id path string true "案件ID"
+// @Param request body CreateApplicationRequest true "応募メッセージ"
+// @Success 201 {object} model.Application "応募作成成功"
+// @Failure 400 {object} util.Response "無効なパラメータ、または案件が募集中でない"
+// @Failure 401 {object} util.Response "認証エラー"
+// @Failure 404 {object} util.Response "案件が見つかりません"
+// @Failure 409 {object} util.Response "既に応募済み"
+// @Failure 500 {object} util.Response "サーバーエラー"
 func (h *ApplicationHandler) Create(c *gin.Context) {
 	var req CreateApplicationRequest
 	caseRepository := case_repository.NewCaseRepository(h.db)

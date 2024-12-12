@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
+	_ "github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 type CreateReviewRequest struct {
@@ -15,6 +16,21 @@ type CreateReviewRequest struct {
 	Comment        string `json:"comment"`
 }
 
+// @Summary レビュー作成
+// @Description マッチング完了後、相手ユーザーへのレビューを作成します。1つのマッチングにつき1人のユーザーは1回のみレビュー可能です。
+// @Tags レビュー
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {token} 形式"
+// @Param request body CreateReviewRequest true "レビュー情報"
+// @Success 201 {object} model.Review "レビュー作成成功"
+// @Failure 400 {object} util.Response "リクエストが不正です / 完了していないマッチングにはレビューできません / このマッチングに関係のないユーザーにレビューはできません"
+// @Failure 401 {object} util.Response "認証エラー"
+// @Failure 403 {object} util.Response "このマッチングにレビューを投稿する権限がありません"
+// @Failure 404 {object} util.Response "マッチングが見つかりません"
+// @Failure 409 {object} util.Response "既にレビューを投稿済みです"
+// @Failure 500 {object} util.Response "サーバーエラー / 信頼スコアの更新に失敗しました"
+// @Router /reviews [post]
 func (h *ReviewHandler) Create(c *gin.Context) {
 	var req CreateReviewRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

@@ -16,3 +16,9 @@
 ```
 $ docker compose up -d --build
 ```
+
+
+# ドキュメント更新
+```
+swag init --parseDependency --parseInternal -g ./cmd/api/main.go
+```

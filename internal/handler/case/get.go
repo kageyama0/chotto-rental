@@ -16,7 +16,7 @@ func getParams(c *gin.Context) (caseID *uuid.UUID, errCode int) {
 	cCaseID := c.Param("id")
 	caseID, isValid := util.CheckUUID(c, cCaseID)
 	if !isValid {
-		return nil, e.INVALID_ID
+		return nil, e.INVALID_PARAMS
 	}
 
 	return caseID, e.OK

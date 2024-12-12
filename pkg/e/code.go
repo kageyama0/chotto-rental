@@ -10,16 +10,16 @@ const (
 	// 400系
 	BAD_REQUEST                    = 400
 	JSON_PARSE_ERROR               = 400001
-	INVALID_ID			               = 400002
+	INVALID_PARAMS			           = 400002
 	CASE_NOT_OPEN						       = 400003
-	ALREADY_APPLIED					       = 400004
-	OVER_CONFIRMATION_DEADLINE		 = 400005
+	OVER_CONFIRMATION_DEADLINE		 = 400004
 
 	// 401系
 	UNAUTHORIZED                   = 401
 	AUTH_REQUIRED									 = 401001
 	INVALID_TOKEN                  = 401002
 	INVALID_TOKEN_FORMAT           = 401003
+	INVALID_EMAIL_OR_PASSWORD			 = 401004
 
 
 	// 403系
@@ -33,6 +33,10 @@ const (
 	NOT_FOUND_CASE                 = 404002
 	NOT_FOUND_APPLICATION          = 404003
 	NOT_FOUND_REVIEW               = 404004
+
+	// 409系
+	ALREADY_APPLIED                = 409001
+	EMAIL_ALREADY_EXISTS        = 409002
 
 
 	// 500系

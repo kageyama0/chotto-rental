@@ -9,9 +9,8 @@ var MsgFlags = map[int]string{
 	// 400系エラーメッセージ
 	BAD_REQUEST:                     "リクエストが不正です",
 	JSON_PARSE_ERROR:                "リクエストの形式が不正です",
-	INVALID_ID:                      "無効なIDを使用しています",
+	INVALID_PARAMS:                      "無効なIDを使用しています",
 	CASE_NOT_OPEN:                   "この案件は募集を終了しています",
-	ALREADY_APPLIED:                 "既にこの案件に応募しています",
 	OVER_CONFIRMATION_DEADLINE:      "確認期限が過ぎています",
 
 	// 401系エラーメッセージ
@@ -19,6 +18,7 @@ var MsgFlags = map[int]string{
 	INVALID_TOKEN:                   "無効なトークンです",
 	INVALID_TOKEN_FORMAT:            "無効なトークンフォーマットです",
 	AUTH_REQUIRED:                   "認証情報が必要です",
+	INVALID_EMAIL_OR_PASSWORD:       "メールアドレスまたはパスワードが間違っています",
 
 	// 403系エラーメッセージ
 	FORBIDDEN:                       "この操作を行う権限がありません",
@@ -33,9 +33,13 @@ var MsgFlags = map[int]string{
 	NOT_FOUND_APPLICATION:           "応募が見つかりません",
 	NOT_FOUND_REVIEW:                "レビューが見つかりません",
 
+	// 409系エラーメッセージ
+	ALREADY_APPLIED:                 "既にこの案件に応募しています",
+	EMAIL_ALREADY_EXISTS:            "既にこのメールアドレスは登録されています",
+
 
 	// 500系エラーメッセージ
-	SERVER_ERROR:                    "500.サーバーエラー",
+	SERVER_ERROR:                    "サーバーエラー",
 }
 
 func GetMsg(code int) string {

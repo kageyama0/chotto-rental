@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	_ "github.com/kageyama0/chotto-rental/internal/model"
 	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"
@@ -16,19 +17,32 @@ func confirmArrivalParams(c *gin.Context) (matchingID *uuid.UUID, userID *uuid.U
 	cParamID:= c.Param("id")
 	matchingID, isValid := util.CheckUUID(c, cParamID)
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	cUserID, _ := c.Get("userID")
 	userID, isValid = util.CheckUUID(c, cUserID.(string))
 	if !isValid {
-		return nil, nil, e.INVALID_ID
+		return nil, nil, e.INVALID_PARAMS
 	}
 
 	return matchingID, userID, e.OK
 }
 
-// -- ConfirmArrival: 到着確認を行う
+// @Summary 到着確認
+// @Description マッチング成立後の到着確認を行います。依頼者とヘルパー両方の確認が完了すると、マッチングが完了状態になります。
+// @Tags マッチング
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {token} 形式"
+// @Param id path string true "マッチングID"
+// @Success 200 {object} util.Response{data=model.Matching} "OK"
+// @Failure 400 {object} util.Response "リクエストが不正です / この案件は募集を終了しています / 確認期限が過ぎています"
+// @Failure 401 {object} util.Response "認証エラー"
+// @Failure 403 {object} util.Response "この操作を行う権限がありません"
+// @Failure 404 {object} util.Response "Not Found"
+// @Failure 500 {object} util.Response "サーバーエラー"
+// @Router /matchings/{id}/confirm-arrival [post]
 func (h *MatchingHandler) ConfirmArrival(c *gin.Context) {
 	var matching Matching
 	matchingRepository := matching_repository.NewMatchingRepository(h.db)

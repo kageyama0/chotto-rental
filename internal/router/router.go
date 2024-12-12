@@ -12,6 +12,8 @@ import (
 	user_handler "github.com/kageyama0/chotto-rental/internal/handler/user"
 	"github.com/kageyama0/chotto-rental/pkg/auth"
 	"github.com/kageyama0/chotto-rental/pkg/middleware"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +27,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	reviewHandler := review_handler.NewReviewHandler(db)
 	userHandler := user_handler.NewUserHandler(db)
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
@@ -55,7 +58,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 				cases.DELETE("/:id", caseHandler.Delete)
 			}
 
-			applications := auth.Group("/applications")
+			// エンドポイント
+			applications := auth.Group("/application")
 			{
 				applications.POST("", applicationHandler.Create)
 				applications.GET("", applicationHandler.List)
@@ -68,7 +72,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 				matchings.POST("/:id/confirm-arrival", matchingHandler.ConfirmArrival)
 			}
 
-			reviews := auth.Group("/reviews")
+			reviews := auth.Group("/review")
 			{
 				reviews.POST("", reviewHandler.Create)
 				reviews.GET("", reviewHandler.List)

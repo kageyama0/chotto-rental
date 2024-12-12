@@ -26,7 +26,17 @@ func deleteParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
 	return userID, http.StatusOK
 }
 
-// -- Delete: ユーザーを削除する
+// @Summary ユーザー削除
+// @Description ユーザーと関連する全てのデータ（レビュー、マッチング、応募、案件）を削除します
+// @Tags ユーザー
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {token} 形式"
+// @Success 204 {object} util.Response "No Content"
+// @Failure 400 {object} util.Response "リクエストが不正です"
+// @Failure 401 {object} util.Response "認証エラー"
+// @Failure 500 {object} util.Response "サーバーエラー"
+// @Router /users/me [delete]
 func (h *UserHandler) Delete(c *gin.Context) {
 	// パラメータの取得
 	userID, errCode := deleteParams(c)

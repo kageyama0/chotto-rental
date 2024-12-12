@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	_ "github.com/kageyama0/chotto-rental/internal/model"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
 	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
@@ -43,7 +44,21 @@ func createParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, 
 	return applicationID, userID, http.StatusOK
 }
 
-// --Create: マッチングを作成する
+// @Summary マッチング作成
+// @Description 応募を承認してマッチングを作成します。応募のステータスを「accepted」に、案件のステータスを「matched」に更新します。
+// @Tags マッチング
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer {token} 形式"
+// @Param application_id path string true "応募ID"
+// @Param request body CreateMatchingRequest true "マッチング作成情報"
+// @Success 201 {object} util.Response{data=model.Matching} "Created"
+// @Failure 400 {object} util.Response "リクエストが不正です"
+// @Failure 401 {object} util.Response "認証エラー"
+// @Failure 403 {object} util.Response "この操作を行う権限がありません"
+// @Failure 404 {object} util.Response "案件が見つかりません"
+// @Failure 500 {object} util.Response "サーバーエラー"
+// @Router /applications/{application_id}/matching [post]
 func (h *MatchingHandler) Create(c *gin.Context) {
 	var req CreateMatchingRequest
 	var application Application
