@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	_ "github.com/kageyama0/chotto-rental/internal/model"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	"github.com/kageyama0/chotto-rental/pkg/e"
@@ -14,30 +13,6 @@ import (
 type UpdateApplicationStatusRequest struct {
 	Status string `json:"status" binding:"required,oneof=accepted rejected"`
 }
-
-// -- updateStatusParams: UpdateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
-func updateStatusParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
-	var req UpdateApplicationStatusRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, nil, e.JSON_PARSE_ERROR
-	}
-
-	cParamsID := c.Param("id")
-	applicationID, isValid := util.CheckUUID(c, cParamsID)
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
-
-	cUserID, _ := c.Get("userID")
-	userID, isValid = util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
-
-	return applicationID, userID, e.OK
-}
-
 
 // @Summary 応募ステータス更新
 // @Description 応募のステータスを更新します（案件作成者のみ可能）
@@ -58,7 +33,8 @@ func (h *ApplicationHandler) UpdateStatus(c *gin.Context) {
 	var req UpdateApplicationStatusRequest
 
 	applicationRepository := application_repository.NewApplicationRepository(h.db)
-	applicationID, userID, errCode := updateStatusParams(c)
+	params, userID, errCode := util.GetParams(c, []string{"application_id"})
+	applicationID := params["application_id"]
 	if errCode != e.OK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return

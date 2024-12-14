@@ -9,9 +9,10 @@ var MsgFlags = map[int]string{
 	// 400系エラーメッセージ
 	BAD_REQUEST:                     "リクエストが不正です",
 	JSON_PARSE_ERROR:                "リクエストの形式が不正です",
-	INVALID_PARAMS:                      "無効なIDを使用しています",
+	INVALID_UUID:                    "無効なIDを使用しています",
 	CASE_NOT_OPEN:                   "この案件は募集を終了しています",
 	OVER_CONFIRMATION_DEADLINE:      "確認期限が過ぎています",
+	INVALID_USER_ID:                 "無効なユーザーIDを使用しています",
 
 	// 401系エラーメッセージ
 	UNAUTHORIZED:                    "認証エラー",

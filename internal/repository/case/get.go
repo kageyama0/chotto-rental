@@ -5,7 +5,7 @@ import (
 )
 
 // -- FindByID: idで案件を取得
-func (r *CaseRepository) FindByID(id *uuid.UUID) (*Case, error) {
+func (r *CaseRepository) FindByID(id uuid.UUID) (*Case, error) {
 	var c Case
 
 	err := r.db.First(&c, "id = ?", id).Error
@@ -30,7 +30,7 @@ func (r *CaseRepository) FindAll() ([]Case, error){
 }
 
 // -- FindByIdWithUser: idで案件を取得し、ユーザー情報も取得
-func (r *CaseRepository) FindByIDWithUser(id *uuid.UUID) (*Case, error) {
+func (r *CaseRepository) FindByIDWithUser(id uuid.UUID) (*Case, error) {
 	var c Case
 
 	if err := r.db.Preload("User").First(&c, "id = ?", id).Error; err != nil {

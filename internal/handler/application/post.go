@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
@@ -20,30 +19,30 @@ type CreateApplicationRequest struct {
 
 
 // -- createStatusParams: CreateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
-func createStatusParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode int) {
-	var req CreateApplicationRequest
+// func createStatusParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode int) {
+// 	var req CreateApplicationRequest
 
-	// リクエストのパース
-	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, nil, e.JSON_PARSE_ERROR
-	}
+// 	// リクエストのパース
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		return nil, nil, e.JSON_PARSE_ERROR
+// 	}
 
-	// パラメータの取得
-	cCaseID := req.CaseID
-	caseID, isValid := util.CheckUUID(c, cCaseID)
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
+// 	// パラメータの取得
+// 	cCaseID := req.CaseID
+// 	caseID, errCode := util.ParseUUID(c, cCaseID)
+// 	if !errCode {
+// 		return nil, nil, e.INVALID_PARAMS
+// 	}
 
-	// ユーザーIDの取得
-	cUserID, _ := c.Get("userID")
-	userID, isValid = util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
+// 	// ユーザーIDの取得
+// 	cUserID, _ := c.Get("userID")
+// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
+// 	if !errCode {
+// 		return nil, nil, e.INVALID_PARAMS
+// 	}
 
-	return caseID, userID, e.OK
-}
+// 	return caseID, userID, e.OK
+// }
 
 
 // @Summary 応募作成
@@ -66,11 +65,12 @@ func (h *ApplicationHandler) Create(c *gin.Context) {
 	applicationRepository := application_repository.NewApplicationRepository(h.db)
 
 	// パラメータの取得
-	caseID, uid, errCode := createStatusParams(c)
+	params, userID, errCode := util.GetParams(c, []string{"case_id"})
 	if errCode != e.OK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
+	caseID := params["case_id"]
 
 	// 案件の取得
 	var caseData *model.Case
@@ -86,7 +86,7 @@ func (h *ApplicationHandler) Create(c *gin.Context) {
 	}
 
 	// 既に応募していないか確認
-	_, err = applicationRepository.FindByCaseIDAndApplicantID(*caseID, *uid)
+	_, err = applicationRepository.FindByCaseIDAndApplicantID(caseID, *userID)
 	if err == nil {
 		util.CreateResponse(c, http.StatusConflict, e.ALREADY_APPLIED, nil)
 		return
@@ -94,8 +94,8 @@ func (h *ApplicationHandler) Create(c *gin.Context) {
 
 	// 応募の作成
 	application := model.Application{
-		CaseID:      *caseID,
-		ApplicantID: *uid,
+		CaseID:      caseID,
+		ApplicantID: *userID,
 		Message:     req.Message,
 		Status:      "pending",
 	}

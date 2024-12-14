@@ -35,8 +35,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	api := r.Group("/api")
 	{
 		// 認証不要のエンドポイント
-		api.POST("/register", authHandler.Register)
-		api.POST("/login", authHandler.Login)
+		api.POST("/auth/register", authHandler.Register)
+		api.POST("/auth/login", authHandler.Login)
 
 		// 認証が必要なエンドポイント
 		auth := api.Group("", middleware.AuthMiddleware(authService))
@@ -53,29 +53,27 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 			{
 				cases.POST("", caseHandler.Create)
 				cases.GET("", caseHandler.List)
-				cases.GET("/:id", caseHandler.Get)
-				cases.PUT("/:id", caseHandler.Update)
-				cases.DELETE("/:id", caseHandler.Delete)
-			}
+				cases.GET("/:case_id", caseHandler.Get)
+				cases.PUT("/:case_id", caseHandler.Update)
+				cases.DELETE("/:case_id", caseHandler.Delete)
 
-			// エンドポイント
-			applications := auth.Group("/application")
-			{
-				applications.POST("", applicationHandler.Create)
-				applications.GET("", applicationHandler.List)
-				applications.PUT("/:id/status", applicationHandler.UpdateStatus)
-			}
+				applications := cases.Group("/applications")
+				{
+					applications.POST("", applicationHandler.Create)
+					applications.GET("", applicationHandler.List)
+					applications.PUT("/:application_id/status", applicationHandler.UpdateStatus)
+				}
 
-			matchings := auth.Group("/matchings")
-			{
-				matchings.POST("", matchingHandler.Create)
-				matchings.POST("/:id/confirm-arrival", matchingHandler.ConfirmArrival)
-			}
-
-			reviews := auth.Group("/review")
-			{
-				reviews.POST("", reviewHandler.Create)
-				reviews.GET("", reviewHandler.List)
+				matchings := cases.Group("/matchings")
+				{
+					matchings.POST("", matchingHandler.Create)
+					matchings.POST("/:matching_id/confirm-arrival", matchingHandler.ConfirmArrival)
+					reviews := matchings.Group("/review")
+					{
+						reviews.POST("", reviewHandler.Create)
+						reviews.GET("", reviewHandler.List)
+					}
+				}
 			}
 		}
 	}

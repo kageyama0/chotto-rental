@@ -10,9 +10,10 @@ const (
 	// 400系
 	BAD_REQUEST                    = 400
 	JSON_PARSE_ERROR               = 400001
-	INVALID_PARAMS			           = 400002
+	INVALID_UUID			             = 400002
 	CASE_NOT_OPEN						       = 400003
 	OVER_CONFIRMATION_DEADLINE		 = 400004
+	INVALID_USER_ID								 = 400005
 
 	// 401系
 	UNAUTHORIZED                   = 401

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	_ "github.com/kageyama0/chotto-rental/internal/model"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
@@ -23,26 +22,26 @@ type CreateMatchingRequest struct {
 
 
 // --CreateParams: Createのパラメータを取得する
-func createParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
-	var req CreateMatchingRequest
+// func createParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
+// 	var req CreateMatchingRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		return nil, nil, http.StatusBadRequest
-	}
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		return nil, nil, http.StatusBadRequest
+// 	}
 
-	applicationID, isValid := util.CheckUUID(c, req.ApplicationID)
-	if !isValid {
-		return nil, nil, http.StatusBadRequest
-	}
+// 	applicationID, errCode := util.ParseUUID(c, req.ApplicationID)
+// 	if !errCode {
+// 		return nil, nil, http.StatusBadRequest
+// 	}
 
-	cUserID, _ := c.Get("userID")
-	userID, isValid = util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, nil, http.StatusBadRequest
-	}
+// 	cUserID, _ := c.Get("userID")
+// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
+// 	if !errCode {
+// 		return nil, nil, http.StatusBadRequest
+// 	}
 
-	return applicationID, userID, http.StatusOK
-}
+// 	return applicationID, userID, http.StatusOK
+// }
 
 // @Summary マッチング作成
 // @Description 応募を承認してマッチングを作成します。応募のステータスを「accepted」に、案件のステータスを「matched」に更新します。
@@ -65,7 +64,8 @@ func (h *MatchingHandler) Create(c *gin.Context) {
 	applicationRepository := application_repository.NewApplicationRepository(h.db)
 
 	// パラメータの取得
-	applicationID, userID, errCode := createParams(c)
+	params, userID, errCode := util.GetParams(c, []string{"application_id"})
+	applicationID := params["application_id"]
 	if errCode != http.StatusOK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return

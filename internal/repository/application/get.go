@@ -16,7 +16,7 @@ func (r *ApplicationRepository) FindByCaseIDAndApplicantID(caseID uuid.UUID, app
 }
 
 // 応募のIDを使用して、案件を紐づけた応募を取得する
-func (r *ApplicationRepository) FindByIDWithCase(id *uuid.UUID) (Application, error) {
+func (r *ApplicationRepository) FindByIDWithCase(id uuid.UUID) (Application, error) {
 	var application Application
 
 	err := r.db.Preload("Case").First(&application, "id = ?", id).Error

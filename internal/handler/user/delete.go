@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
 	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
@@ -14,17 +13,6 @@ import (
 	"github.com/kageyama0/chotto-rental/pkg/util"
 	"gorm.io/gorm"
 )
-
-// -- DeleteParams: Deleteのパラメータを取得する
-func deleteParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
-	cUserID, _ := c.Get("userID")
-	userID, isValid := util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, http.StatusBadRequest
-	}
-
-	return userID, http.StatusOK
-}
 
 // @Summary ユーザー削除
 // @Description ユーザーと関連する全てのデータ（レビュー、マッチング、応募、案件）を削除します
@@ -39,8 +27,8 @@ func deleteParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
 // @Router /users/me [delete]
 func (h *UserHandler) Delete(c *gin.Context) {
 	// パラメータの取得
-	userID, errCode := deleteParams(c)
-	if errCode != http.StatusOK {
+	_, userID, errCode := util.GetParams(c, []string{})
+	if errCode != e.OK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}

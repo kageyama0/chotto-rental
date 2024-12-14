@@ -2,22 +2,18 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
-
 	"github.com/kageyama0/chotto-rental/pkg/e"
 )
 
-
 // @Description HTTPレスポンス
 type Response struct {
-	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
-func CreateResponse(c *gin.Context, httpCode, errCode int, data interface{}) {
+func CreateResponse(c *gin.Context, httpCode int, msgCode int, data interface{}) {
 	c.JSON(httpCode, Response{
-		Code: errCode,
-		Msg:  e.GetMsg(errCode),
+		Msg:  e.GetMsg(msgCode),
 		Data: data,
 	})
 }

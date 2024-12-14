@@ -5,7 +5,7 @@ import (
 )
 
 // -- FindByID: IDを使用してマッチングを取得する
-func (r *MatchingRepository) FindByID(id *uuid.UUID) (Matching, error) {
+func (r *MatchingRepository) FindByID(id uuid.UUID) (Matching, error) {
 	var matching Matching
 
 	err := r.db.First(&matching, "id = ?", id).Error

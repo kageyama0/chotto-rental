@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	_ "github.com/kageyama0/chotto-rental/internal/model"
 	matching_repository "github.com/kageyama0/chotto-rental/internal/repository/matching"
 	"github.com/kageyama0/chotto-rental/pkg/e"
@@ -13,21 +12,21 @@ import (
 )
 
 // --confirmArrivalParams: ConfirmArrivalのパラメータを取得する
-func confirmArrivalParams(c *gin.Context) (matchingID *uuid.UUID, userID *uuid.UUID, errCode int) {
-	cParamID:= c.Param("id")
-	matchingID, isValid := util.CheckUUID(c, cParamID)
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
+// func confirmArrivalParams(c *gin.Context) (matchingID *uuid.UUID, userID *uuid.UUID, errCode int) {
+// 	cParamID:= c.Param("id")
+// 	matchingID, errCode := util.ParseUUID(c, cParamID)
+// 	if !errCode {
+// 		return nil, nil, e.INVALID_PARAMS
+// 	}
 
-	cUserID, _ := c.Get("userID")
-	userID, isValid = util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, nil, e.INVALID_PARAMS
-	}
+// 	cUserID, _ := c.Get("userID")
+// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
+// 	if !errCode {
+// 		return nil, nil, e.INVALID_PARAMS
+// 	}
 
-	return matchingID, userID, e.OK
-}
+// 	return matchingID, userID, e.OK
+// }
 
 // @Summary 到着確認
 // @Description マッチング成立後の到着確認を行います。依頼者とヘルパー両方の確認が完了すると、マッチングが完了状態になります。
@@ -48,14 +47,14 @@ func (h *MatchingHandler) ConfirmArrival(c *gin.Context) {
 	matchingRepository := matching_repository.NewMatchingRepository(h.db)
 
 	// パラメータの取得
-	matchingID, userID, errCode := confirmArrivalParams(c)
+	params, userID, errCode := util.GetParams(c, []string{"matching_id"})
 	if errCode != e.OK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
 	// マッチングの取得
-	matching, err := matchingRepository.FindByID(matchingID)
+	matching, err := matchingRepository.FindByID(params["matching_id"])
 	if err != nil {
 		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND, nil)
 		return

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kageyama0/chotto-rental/internal/model"
+	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
@@ -25,21 +25,22 @@ import (
 // @Failure 500 {object} util.Response "サーバーエラー"
 // @Router /cases/{id} [put]
 func (h *CaseHandler) Update(c *gin.Context) {
-	id := c.Param("id")
 	var req CreateCaseRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		util.CreateResponse(c, http.StatusBadRequest, e.INVALID_PARAMS, nil)
+	caseRepository := case_repository.NewCaseRepository(h.db)
+
+	params, userID, errCode := util.GetParams(c, []string{"case_id"})
+	if errCode != e.OK {
+			util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
+	}
+	caseID := params["case_id"]
+
+	caseData, err := caseRepository.FindByID(caseID)
+	if err != nil {
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_CASE, nil)
 		return
 	}
 
-	var caseData model.Case
-	if err := h.db.First(&caseData, "id = ?", id).Error; err != nil {
-		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND, nil)
-		return
-	}
-
-	userID, _ := c.Get("userID")
-	if caseData.UserID.String() != userID.(string) {
+	if caseData.UserID != *userID {
 		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN, nil)
 		return
 	}
@@ -56,5 +57,5 @@ func (h *CaseHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, caseData)
+	util.CreateResponse(c, http.StatusOK, e.OK, caseData)
 }

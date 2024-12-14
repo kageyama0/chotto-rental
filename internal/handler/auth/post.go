@@ -9,25 +9,6 @@ import (
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
-type AuthResponse struct {
-	Token string      `json:"token"`
-	User  interface{} `json:"user"`
-}
-
-// @Description ユーザー登録リクエスト
-type RegisterRequest struct {
-	Email       string `json:"email" binding:"required,email"`
-	Password    string `json:"password" binding:"required,min=8"`
-	DisplayName string `json:"display_name" binding:"required"`
-}
-
-// @Description ログインリクエスト
-type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
-
 // 登録ハンドラー
 // @Summary ユーザー登録
 // @Description 新規ユーザーを登録し、認証トークンを発行します
@@ -43,8 +24,7 @@ type LoginRequest struct {
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		// c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		util.CreateResponse(c, http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		util.CreateResponse(c, http.StatusBadRequest, e.JSON_PARSE_ERROR, nil)
 		return
 	}
 
@@ -109,7 +89,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		util.CreateResponse(c, http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		util.CreateResponse(c, http.StatusBadRequest, e.JSON_PARSE_ERROR, nil)
 		return
 	}
 

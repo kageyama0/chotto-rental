@@ -4,24 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	_ "github.com/kageyama0/chotto-rental/internal/model"
 	application_repository "github.com/kageyama0/chotto-rental/internal/repository/application"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
-
-// List関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
-func listParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
-	// ユーザーIDの取得
-	cUserID, _ := c.Get("userID")
-	userID, isValid := util.CheckUUID(c, cUserID.(string))
-	if !isValid {
-		return nil, e.INVALID_PARAMS
-	}
-
-	return userID, e.OK
-}
 
 // @Summary 応募一覧取得
 // @Description ユーザーの全ての応募履歴を案件情報と共に取得します
@@ -37,7 +24,7 @@ func listParams(c *gin.Context) (userID *uuid.UUID, errCode int) {
 func (h *ApplicationHandler) List(c *gin.Context) {
 	applicationRepository := application_repository.NewApplicationRepository(h.db)
 
-	userID, errCode := listParams(c)
+	_, userID, errCode := util.GetParams(c, []string{})
 	if errCode != e.OK {
 		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
