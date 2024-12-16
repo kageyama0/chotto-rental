@@ -8,7 +8,7 @@ type AuthResponse struct {
 }
 
 // @Description ユーザー登録リクエスト
-type RegisterRequest struct {
+type SignupRequest struct {
 	Email       string `json:"email" binding:"required,email"`
 	Password    string `json:"password" binding:"required,min=8"`
 	DisplayName string `json:"display_name" binding:"required"`

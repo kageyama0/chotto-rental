@@ -15,14 +15,14 @@ import (
 // @Tags 認証
 // @Accept json
 // @Produce json
-// @Param request body RegisterRequest true "登録情報"
+// @Param request body SignupRequest true "登録情報"
 // @Success 201 {object} util.Response{data=AuthResponse} "登録成功"
 // @Failure 400 {object} util.Response "無効なパラメータ"
 // @Failure 409 {object} util.Response "メールアドレスが既に使用されています"
 // @Failure 500 {object} util.Response "サーバーエラー"
-// @Router /auth/register [post]
-func (h *AuthHandler) Register(c *gin.Context) {
-	var req RegisterRequest
+// @Router /auth/signup [post]
+func (h *AuthHandler) Signup(c *gin.Context) {
+	var req SignupRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		util.CreateResponse(c, http.StatusBadRequest, e.JSON_PARSE_ERROR, nil)
 		return

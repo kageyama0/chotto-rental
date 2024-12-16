@@ -300,7 +300,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/register": {
+        "/auth/signup": {
             "post": {
                 "description": "新規ユーザーを登録し、認証トークンを発行します",
                 "consumes": [
@@ -320,7 +320,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_handler_auth.RegisterRequest"
+                            "$ref": "#/definitions/internal_handler_auth.SignupRequest"
                         }
                     }
                 ],
@@ -1137,7 +1137,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_handler_auth.RegisterRequest": {
+        "internal_handler_auth.SignupRequest": {
             "description": "ユーザー登録リクエスト",
             "type": "object",
             "required": [

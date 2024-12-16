@@ -196,7 +196,7 @@ definitions:
       - email
       - password
     type: object
-  internal_handler_auth.RegisterRequest:
+  internal_handler_auth.SignupRequest:
     description: ユーザー登録リクエスト
     properties:
       display_name:
@@ -459,7 +459,7 @@ paths:
       summary: ログイン
       tags:
         - 認証
-  /auth/register:
+  /auth/signup:
     post:
       consumes:
         - application/json
@@ -470,7 +470,7 @@ paths:
           name: request
           required: true
           schema:
-            $ref: "#/definitions/internal_handler_auth.RegisterRequest"
+            $ref: "#/definitions/internal_handler_auth.SignupRequest"
       produces:
         - application/json
       responses:

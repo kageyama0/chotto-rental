@@ -35,7 +35,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	api := r.Group("/api")
 	{
 		// 認証不要のエンドポイント
-		api.POST("/auth/register", authHandler.Register)
+		api.POST("/auth/signup", authHandler.Signup)
 		api.POST("/auth/login", authHandler.Login)
 
 		// 認証が必要なエンドポイント

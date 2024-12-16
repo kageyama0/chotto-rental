@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"time"
 	"errors"
+	"time"
+
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
