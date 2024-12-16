@@ -15,6 +15,6 @@ type CreateCaseRequest struct {
 	Description    string    `json:"description" binding:"required"`
 	Reward         int       `json:"reward" binding:"required,min=0"`
 	Location       string    `json:"location" binding:"required"`
-	ScheduledDate  time.Time   `json:"scheduled_date" binding:"required"`
-	DurationMinutes int      `json:"duration_minutes" binding:"required,min=1"`
+	ScheduledDate  time.Time   `json:"scheduledDate" binding:"required"`
+	DurationMinutes int      `json:"durationMinutes" binding:"required,min=1"`
 }

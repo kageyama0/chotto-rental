@@ -14,6 +14,7 @@ const (
 	CASE_NOT_OPEN						       = 400003
 	OVER_CONFIRMATION_DEADLINE		 = 400004
 	INVALID_USER_ID								 = 400005
+	MATCHING_NOT_COMPLETED				 = 400006
 
 	// 401系
 	UNAUTHORIZED                   = 401
@@ -27,6 +28,7 @@ const (
 	FORBIDDEN                      = 403
 	FORBIDDEN_UPDATE_APPLICATION   = 403001
 	FORBIDDEN_DELETE_CASE		       = 403002
+	FORBIDDEN_REVIEW							 = 403003
 
 	// 404系
 	NOT_FOUND				               = 404
@@ -34,10 +36,12 @@ const (
 	NOT_FOUND_CASE                 = 404002
 	NOT_FOUND_APPLICATION          = 404003
 	NOT_FOUND_REVIEW               = 404004
+	NOT_FOUND_MATCHING						 = 404005
 
 	// 409系
 	ALREADY_APPLIED                = 409001
-	EMAIL_ALREADY_EXISTS        = 409002
+	EMAIL_ALREADY_EXISTS           = 409002
+	ALREADY_REVIEWED							 = 409003
 
 
 	// 500系

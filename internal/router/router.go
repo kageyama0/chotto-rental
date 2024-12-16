@@ -70,18 +70,18 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 				cases.PUT("/:case_id", caseHandler.Update)
 				cases.DELETE("/:case_id", caseHandler.Delete)
 
-				applications := cases.Group("/applications")
+				applications := cases.Group("/:case_id/applications")
 				{
 					applications.POST("", applicationHandler.Create)
 					applications.GET("", applicationHandler.List)
 					applications.PUT("/:application_id/status", applicationHandler.UpdateStatus)
 				}
 
-				matchings := cases.Group("/matchings")
+				matchings := cases.Group("/:case_id/matchings")
 				{
 					matchings.POST("", matchingHandler.Create)
 					matchings.POST("/:matching_id/confirm-arrival", matchingHandler.ConfirmArrival)
-					reviews := matchings.Group("/review")
+					reviews := matchings.Group("/:matching_id/review")
 					{
 						reviews.POST("", reviewHandler.Create)
 						reviews.GET("", reviewHandler.List)

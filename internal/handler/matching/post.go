@@ -16,32 +16,9 @@ import (
 
 
 type CreateMatchingRequest struct {
-	ApplicationID   string `json:"application_id" binding:"required"`
-	MeetingLocation string `json:"meeting_location" binding:"required"`
+	MeetingLocation string `json:"meetingLocation" binding:"required"`
 }
 
-
-// --CreateParams: Createのパラメータを取得する
-// func createParams(c *gin.Context) (applicationID *uuid.UUID, userID *uuid.UUID, errCode int) {
-// 	var req CreateMatchingRequest
-
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		return nil, nil, http.StatusBadRequest
-// 	}
-
-// 	applicationID, errCode := util.ParseUUID(c, req.ApplicationID)
-// 	if !errCode {
-// 		return nil, nil, http.StatusBadRequest
-// 	}
-
-// 	cUserID, _ := c.Get("userID")
-// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
-// 	if !errCode {
-// 		return nil, nil, http.StatusBadRequest
-// 	}
-
-// 	return applicationID, userID, http.StatusOK
-// }
 
 // @Summary マッチング作成
 // @Description 応募を承認してマッチングを作成します。応募のステータスを「accepted」に、案件のステータスを「matched」に更新します。

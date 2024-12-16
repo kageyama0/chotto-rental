@@ -6,12 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/internal/model"
-	_ "github.com/kageyama0/chotto-rental/pkg/util"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 type CreateReviewRequest struct {
-	MatchingID     string `json:"matching_id" binding:"required"`
-	ReviewedUserID string `json:"reviewed_user_id" binding:"required"`
+	ReviewedUserID string `json:"reviewedUserId" binding:"required"`
 	Score          int    `json:"score" binding:"required,min=1,max=5"`
 	Comment        string `json:"comment"`
 }
@@ -38,37 +38,43 @@ func (h *ReviewHandler) Create(c *gin.Context) {
 		return
 	}
 
-	userID, _ := c.Get("userID")
-	reviewerID, _ := uuid.Parse(userID.(string))
+	// パラメータの取得
+	params, userID, err := util.GetParams(c, []string{"matching_id"})
+	if err != e.OK {
+		util.CreateResponse(c, http.StatusBadRequest, err, nil)
+		return
+	}
+
+	reviewerID := *userID
 	reviewedUserID, _ := uuid.Parse(req.ReviewedUserID)
-	matchingID, _ := uuid.Parse(req.MatchingID)
+	matchingID := params["matching_id"]
 
 	// マッチングの存在確認と権限チェック
 	var matching model.Matching
 	if err := h.db.First(&matching, "id = ?", matchingID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "マッチングが見つかりません"})
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_MATCHING, nil)
 		return
 	}
 
 	if matching.Status != "completed" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "完了していないマッチングにはレビューできません"})
+		util.CreateResponse(c, http.StatusBadRequest, e.MATCHING_NOT_COMPLETED, nil)
 		return
 	}
 
 	if matching.RequesterID != reviewerID && matching.HelperID != reviewerID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "このマッチングにレビューを投稿する権限がありません"})
+		util.CreateResponse(c, http.StatusForbidden, e.FORBIDDEN_REVIEW, nil)
 		return
 	}
 
 	if matching.RequesterID != reviewedUserID && matching.HelperID != reviewedUserID {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "このマッチングに関係のないユーザーにレビューはできません"})
+		util.CreateResponse(c, http.StatusBadRequest, e.FORBIDDEN_REVIEW, nil)
 		return
 	}
 
 	// 既存レビューの確認
 	var existingReview model.Review
 	if err := h.db.Where("matching_id = ? AND reviewer_id = ?", matchingID, reviewerID).First(&existingReview).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "既にレビューを投稿済みです"})
+		util.CreateResponse(c, http.StatusConflict, e.ALREADY_REVIEWED, nil)
 		return
 	}
 
@@ -81,13 +87,13 @@ func (h *ReviewHandler) Create(c *gin.Context) {
 	}
 
 	if err := h.db.Create(&review).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "レビューの作成に失敗しました"})
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
 	// ユーザーの信頼スコアを更新
 	if err := h.updateUserTrustScore(reviewedUserID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "信頼スコアの更新に失敗しました"})
+		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 

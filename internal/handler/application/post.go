@@ -13,37 +13,8 @@ import (
 
 
 type CreateApplicationRequest struct {
-	CaseID  string `json:"case_id" binding:"required"`
 	Message string `json:"message"`
 }
-
-
-// -- createStatusParams: CreateStatus関数で扱うパラメータが正しいかを確認し、正しい場合はそれらを返します。
-// func createStatusParams(c *gin.Context) (caseID *uuid.UUID, userID *uuid.UUID, errCode int) {
-// 	var req CreateApplicationRequest
-
-// 	// リクエストのパース
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		return nil, nil, e.JSON_PARSE_ERROR
-// 	}
-
-// 	// パラメータの取得
-// 	cCaseID := req.CaseID
-// 	caseID, errCode := util.ParseUUID(c, cCaseID)
-// 	if !errCode {
-// 		return nil, nil, e.INVALID_PARAMS
-// 	}
-
-// 	// ユーザーIDの取得
-// 	cUserID, _ := c.Get("userID")
-// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
-// 	if !errCode {
-// 		return nil, nil, e.INVALID_PARAMS
-// 	}
-
-// 	return caseID, userID, e.OK
-// }
-
 
 // @Summary 応募作成
 // @Description 案件への新規応募を作成します

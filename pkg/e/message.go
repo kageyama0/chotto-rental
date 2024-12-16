@@ -13,6 +13,7 @@ var MsgFlags = map[int]string{
 	CASE_NOT_OPEN:                   "この案件は募集を終了しています",
 	OVER_CONFIRMATION_DEADLINE:      "確認期限が過ぎています",
 	INVALID_USER_ID:                 "無効なユーザーIDを使用しています",
+	MATCHING_NOT_COMPLETED:					"完了していないマッチングにはレビューできません",
 
 	// 401系エラーメッセージ
 	UNAUTHORIZED:                    "認証エラー",
@@ -25,6 +26,7 @@ var MsgFlags = map[int]string{
 	FORBIDDEN:                       "この操作を行う権限がありません",
 	FORBIDDEN_UPDATE_APPLICATION:    "この応募のステータスを更新する権限がありません",
 	FORBIDDEN_DELETE_CASE:           "この案件を削除する権限がありません",
+	FORBIDDEN_REVIEW:								"このマッチングにレビューを投稿する権限がありません",
 
 
 	// 404系エラーメッセージ
@@ -33,10 +35,12 @@ var MsgFlags = map[int]string{
 	NOT_FOUND_CASE:                  "案件が見つかりません",
 	NOT_FOUND_APPLICATION:           "応募が見つかりません",
 	NOT_FOUND_REVIEW:                "レビューが見つかりません",
+	NOT_FOUND_MATCHING:              "マッチングが見つかりません",
 
 	// 409系エラーメッセージ
 	ALREADY_APPLIED:                 "既にこの案件に応募しています",
 	EMAIL_ALREADY_EXISTS:            "既にこのメールアドレスは登録されています",
+	ALREADY_REVIEWED:                "既にこのマッチングにレビューを投稿済みです",
 
 
 	// 500系エラーメッセージ

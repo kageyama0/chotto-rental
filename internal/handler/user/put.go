@@ -10,7 +10,7 @@ import (
 )
 
 type UpdateUserRequest struct {
-	DisplayName string `json:"display_name" binding:"required"`
+	DisplayName string `json:"displayName" binding:"required"`
 }
 
 
