@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kageyama0/chotto-rental/pkg/auth"
+	"github.com/kageyama0/chotto-rental/pkg/service"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
-func AuthMiddleware(authService *auth.AuthService) gin.HandlerFunc {
+func AuthMiddleware(authService *service.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

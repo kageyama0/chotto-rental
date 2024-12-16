@@ -66,8 +66,8 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		"user": gin.H{
 			"id":           user.ID,
 			"email":        user.Email,
-			"display_name": user.DisplayName,
-			"trust_score":  user.TrustScore,
+			"displayName": user.DisplayName,
+			"trustScore":  user.TrustScore,
 		},
 	}
 

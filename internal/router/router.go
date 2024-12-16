@@ -2,7 +2,9 @@ package router
 
 import (
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	application_handler "github.com/kageyama0/chotto-rental/internal/handler/application"
 	auth_handler "github.com/kageyama0/chotto-rental/internal/handler/auth"
@@ -10,8 +12,8 @@ import (
 	matching_handler "github.com/kageyama0/chotto-rental/internal/handler/matching"
 	review_handler "github.com/kageyama0/chotto-rental/internal/handler/review"
 	user_handler "github.com/kageyama0/chotto-rental/internal/handler/user"
-	"github.com/kageyama0/chotto-rental/pkg/auth"
 	"github.com/kageyama0/chotto-rental/pkg/middleware"
+	"github.com/kageyama0/chotto-rental/pkg/service"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
@@ -19,7 +21,18 @@ import (
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
-	authService := auth.NewAuthService(os.Getenv("JWT_SECRET"))
+
+	// dev用の設定
+	r.Use(cors.New(cors.Config{
+			AllowOrigins:     []string{"http://localhost:3000"}, // フロントエンドのURL
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+	}))
+
+	authService := service.NewAuthService(os.Getenv("JWT_SECRET"))
 	applicationHandler := application_handler.NewApplicationHandler(db)
 	authHandler := auth_handler.NewAuthHandler(db, authService)
 	caseHandler := case_handler.NewCaseHandler(db)

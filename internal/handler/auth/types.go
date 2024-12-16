@@ -9,9 +9,9 @@ type AuthResponse struct {
 
 // @Description ユーザー登録リクエスト
 type SignupRequest struct {
+	DisplayName string `json:"displayName" binding:"required"`
 	Email       string `json:"email" binding:"required,email"`
 	Password    string `json:"password" binding:"required,min=8"`
-	DisplayName string `json:"display_name" binding:"required"`
 }
 
 // @Description ログインリクエスト
