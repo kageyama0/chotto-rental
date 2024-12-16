@@ -11,23 +11,6 @@ import (
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
-// --confirmArrivalParams: ConfirmArrivalのパラメータを取得する
-// func confirmArrivalParams(c *gin.Context) (matchingID *uuid.UUID, userID *uuid.UUID, errCode int) {
-// 	cParamID:= c.Param("id")
-// 	matchingID, errCode := util.ParseUUID(c, cParamID)
-// 	if !errCode {
-// 		return nil, nil, e.INVALID_PARAMS
-// 	}
-
-// 	cUserID, _ := c.Get("userID")
-// 	userID, errCode = util.ParseUUID(c, cUserID.(string))
-// 	if !errCode {
-// 		return nil, nil, e.INVALID_PARAMS
-// 	}
-
-// 	return matchingID, userID, e.OK
-// }
-
 // @Summary 到着確認
 // @Description マッチング成立後の到着確認を行います。依頼者とヘルパー両方の確認が完了すると、マッチングが完了状態になります。
 // @Tags マッチング

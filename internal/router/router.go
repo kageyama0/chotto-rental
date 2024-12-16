@@ -59,7 +59,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 				users.GET("/:id", userHandler.Get)
 				users.PUT("/:id", userHandler.Update)
 				users.DELETE("/:id", userHandler.Delete)
-				users.GET("/:id/reviews", userHandler.GetReviews)
+				users.GET("/:id/reviews", userHandler.ListByUser)
 			}
 
 			cases := auth.Group("/cases")
