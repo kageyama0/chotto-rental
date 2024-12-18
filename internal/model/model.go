@@ -7,13 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func Migrate(db *gorm.DB) {
-	db.AutoMigrate(
+func Migrate(db *gorm.DB) error{
+	return db.AutoMigrate(
 		&User{},
 		&Case{},
 		&Application{},
 		&Matching{},
 		&Review{},
+		&Session{},
 	)
 }
 
@@ -96,7 +97,30 @@ type Review struct {
 	Score          int       `gorm:"not null;check:score >= 1 AND score <= 5"`
 	Comment        string
 	CreatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP"`
+	UpdatedAt      time.Time `gorm:"default:CURRENT_TIMESTAMP"`
 	Matching       Matching  `gorm:"foreignkey:MatchingID"`
 	Reviewer       User      `gorm:"foreignkey:ReviewerID"`
 	ReviewedUser   User      `gorm:"foreignkey:ReviewedUserID"`
+}
+
+
+type Session struct {
+		gorm.Model
+	  ID             uuid.UUID  `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+    UserID         uuid.UUID  `gorm:"type:varchar(36);not null"`
+    DeviceInfo     DeviceInfo `gorm:"type:jsonb;not null"`
+    CreatedAt      time.Time  `gorm:"default:CURRENT_TIMESTAMP"`
+		LastAccessedAt time.Time  `gorm:"not null"`
+    ExpiresAt      time.Time  `gorm:"not null"`
+    IsValid        bool       `gorm:"not null;default:true"`
+
+    User           User       `gorm:"foreignKey:UserID"`
+}
+
+type DeviceInfo struct {
+    UserAgent    string `json:"user_agent"`
+    IP           string `json:"ip"`
+    ClientName   string `json:"client_name"`              // モバイルアプリ名など
+    DeviceID     string `json:"device_id,omitempty"`      // デバイス識別子（オプション）
+    LastLocation string `json:"last_location,omitempty"`  // 最後のアクセス位置（オプション）
 }

@@ -1,16 +1,11 @@
 package auth_handler
 
 import (
-	"github.com/kageyama0/chotto-rental/pkg/service"
+	auth_service "github.com/kageyama0/chotto-rental/internal/service/auth"
 	"gorm.io/gorm"
 )
 
-type AuthHandler struct {
-	db          *gorm.DB
-	authService *service.AuthService
-}
-
-func NewAuthHandler(db *gorm.DB, authService *service.AuthService) *AuthHandler {
+func NewAuthHandler(db *gorm.DB, authService *auth_service.AuthService) *AuthHandler {
 	return &AuthHandler{
 		db:          db,
 		authService: authService,

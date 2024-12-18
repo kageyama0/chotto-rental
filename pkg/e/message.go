@@ -14,6 +14,7 @@ var MsgFlags = map[int]string{
 	OVER_CONFIRMATION_DEADLINE:      "確認期限が過ぎています",
 	INVALID_USER_ID:                 "無効なユーザーIDを使用しています",
 	MATCHING_NOT_COMPLETED:					"完了していないマッチングにはレビューできません",
+	INVALID_PASSWORD:                "パスワードが間違っています",
 
 	// 401系エラーメッセージ
 	UNAUTHORIZED:                    "認証エラー",
@@ -21,6 +22,9 @@ var MsgFlags = map[int]string{
 	INVALID_TOKEN_FORMAT:            "無効なトークンフォーマットです",
 	AUTH_REQUIRED:                   "認証情報が必要です",
 	INVALID_EMAIL_OR_PASSWORD:       "メールアドレスまたはパスワードが間違っています",
+	SESSION_EXPIRED:                 "セッションが期限切れです",
+	INVALID_DEVICE:                  "無効なデバイスです",
+	INVALID_SESSION_ID:              "無効なセッションIDを使用しています",
 
 	// 403系エラーメッセージ
 	FORBIDDEN:                       "この操作を行う権限がありません",
@@ -36,10 +40,11 @@ var MsgFlags = map[int]string{
 	NOT_FOUND_APPLICATION:           "応募が見つかりません",
 	NOT_FOUND_REVIEW:                "レビューが見つかりません",
 	NOT_FOUND_MATCHING:              "マッチングが見つかりません",
+	NOT_FOUND_SESSION:               "セッションが見つかりません",
 
 	// 409系エラーメッセージ
 	ALREADY_APPLIED:                 "既にこの案件に応募しています",
-	EMAIL_ALREADY_EXISTS:            "既にこのメールアドレスは登録されています",
+	ALREADY_REGISTERED_EMAIL:        "既にこのメールアドレスは登録されています",
 	ALREADY_REVIEWED:                "既にこのマッチングにレビューを投稿済みです",
 
 

@@ -1,10 +1,17 @@
 package auth_handler
 
+import (
+	"github.com/kageyama0/chotto-rental/internal/model"
+	auth_service "github.com/kageyama0/chotto-rental/internal/service/auth"
+	"gorm.io/gorm"
+)
 
 
-type AuthResponse struct {
-	Token string      `json:"token"`
-	User  interface{} `json:"user"`
+type User = model.User
+type DeviceInfo = model.DeviceInfo
+type AuthHandler struct {
+	db          *gorm.DB
+	authService *auth_service.AuthService
 }
 
 // @Description ユーザー登録リクエスト

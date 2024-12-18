@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
@@ -28,48 +27,32 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	// メールアドレスの重複チェック
-	var existingUser model.User
-	if result := h.db.Where("email = ?", req.Email).First(&existingUser); result.Error == nil {
-		util.CreateResponse(c, http.StatusConflict, e.EMAIL_ALREADY_EXISTS, nil)
+	deviceInfo := DeviceInfo{
+		UserAgent: c.GetHeader("User-Agent"),
+		IP:        c.ClientIP(),
+	}
+
+	session, statusCode, errCode := h.authService.Signup(c, req.Email, req.Password, deviceInfo)
+	if errCode != e.OK {
+		util.CreateResponse(c, statusCode, errCode, nil)
 		return
 	}
-
-	// パスワードハッシュ化
-	hashedPassword, err := h.authService.HashPassword(req.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "パスワードの処理に失敗しました"})
-		return
-	}
-
-	user := model.User{
-		Email:        req.Email,
-		PasswordHash: hashedPassword,
-		DisplayName:  req.DisplayName,
-		TrustScore:   1.0,
-	}
-
-	if result := h.db.Create(&user); result.Error != nil {
+	if session == nil {
 		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
-	// JWTトークン生成
-	token, err := h.authService.GenerateToken(user.ID.String())
-	if err != nil {
-		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)
-		return
-	}
+	// セッションIDをクッキーにセット
+	c.SetCookie(
+			"session_id",
+			session.ID.String(),
+			// TODO: configで指定するようにする。一旦30日
+			30*24*60*60,
+			"/",
+			"",
+			true,
+			true,
+	)
 
-	response := gin.H{
-		"token": token,
-		"user": gin.H{
-			"id":           user.ID,
-			"email":        user.Email,
-			"displayName": user.DisplayName,
-			"trustScore":  user.TrustScore,
-		},
-	}
-
-	util.CreateResponse(c, http.StatusCreated, e.CREATED, response)
+	util.CreateResponse(c, http.StatusCreated, e.CREATED, nil)
 }

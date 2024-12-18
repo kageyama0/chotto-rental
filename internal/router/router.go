@@ -1,25 +1,25 @@
 package router
 
 import (
-	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/kageyama0/chotto-rental/config"
 	application_handler "github.com/kageyama0/chotto-rental/internal/handler/application"
 	auth_handler "github.com/kageyama0/chotto-rental/internal/handler/auth"
 	case_handler "github.com/kageyama0/chotto-rental/internal/handler/case"
 	matching_handler "github.com/kageyama0/chotto-rental/internal/handler/matching"
 	review_handler "github.com/kageyama0/chotto-rental/internal/handler/review"
 	user_handler "github.com/kageyama0/chotto-rental/internal/handler/user"
+	auth_service "github.com/kageyama0/chotto-rental/internal/service/auth"
 	"github.com/kageyama0/chotto-rental/pkg/middleware"
-	"github.com/kageyama0/chotto-rental/pkg/service"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func SetupRouter(db *gorm.DB, config *config.Config) *gin.Engine {
 	r := gin.Default()
 
 	// dev用の設定
@@ -32,7 +32,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 			MaxAge:           12 * time.Hour,
 	}))
 
-	authService := service.NewAuthService(os.Getenv("JWT_SECRET"))
+	authService := auth_service.NewAuthService(db, &config.Auth)
 	applicationHandler := application_handler.NewApplicationHandler(db)
 	authHandler := auth_handler.NewAuthHandler(db, authService)
 	caseHandler := case_handler.NewCaseHandler(db)
@@ -50,9 +50,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		// 認証不要のエンドポイント
 		api.POST("/auth/signup", authHandler.Signup)
 		api.POST("/auth/login", authHandler.Login)
+		api.POST("/auth/logout", authHandler.Logout)
+		api.POST("/auth/refresh", authHandler.Refresh)
 
 		// 認証が必要なエンドポイント
-		auth := api.Group("", middleware.AuthMiddleware(authService))
+		auth := api.Group("", middleware.AuthMiddleware(*authService))
 		{
 			users := auth.Group("/users")
 			{

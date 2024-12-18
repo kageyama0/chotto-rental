@@ -6,26 +6,25 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/kageyama0/chotto-rental/config"
+	"github.com/kageyama0/chotto-rental/internal/model"
 	"github.com/kageyama0/chotto-rental/internal/router"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	// "gorm.io/gorm/logger"
-	_ "github.com/kageyama0/chotto-rental/docs" // ここで docs を import
 
+	_ "github.com/kageyama0/chotto-rental/docs" // ここで docs を import
+	"gorm.io/gorm/logger"
 )
 
-func initDB() *gorm.DB {
-	// TODO: 設定値の読み込みは、configフォルダ内でやる
-	// dsn := os.Getenv("DB_URL")
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
-	port := os.Getenv("DB_PORT")
-	sslmode := "disable"
-	timezone := "Asia/Tokyo"
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", host, user, password, dbname, port, sslmode, timezone)
+func initDB(config config.DatabaseConfig) *gorm.DB {
+	host := config.Host
+	user := config.User
+	password := config.Password
+	name := config.Name
+	port := config.Port
+	sslmode := config.SSLMode
+	timezone := config.Timezone
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s", host, user, password, name, port, sslmode, timezone)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -34,11 +33,13 @@ func initDB() *gorm.DB {
 	}
 
 	// ログを出したい時だけでいいので、コメントアウト
-	// db.Config.Logger = logger.Default.LogMode(logger.Info)
+	db.Config.Logger = logger.Default.LogMode(logger.Info)
 
 	// マイグレーションは、必要な時だけでいいので、一旦コメントアウト
 	// TODO: 設定で変えれるようにする
-	// model.Migrate(db)
+	if err := model.Migrate(db); err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 
 	return db
 }
@@ -61,8 +62,13 @@ func init() {
 // @description 「Bearer 」の後にJWTトークンを付与してください
 // @schemes http
 func main() {
-	db := initDB()
-	r := router.SetupRouter(db)
+	config, err := config.InitConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	db := initDB(config.Database)
+	r := router.SetupRouter(db, config)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
