@@ -14,11 +14,9 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type CreateMatchingRequest struct {
 	MeetingLocation string `json:"meetingLocation" binding:"required"`
 }
-
 
 // @Summary マッチング作成
 // @Description 応募を承認してマッチングを作成します。応募のステータスを「accepted」に、案件のステータスを「matched」に更新します。

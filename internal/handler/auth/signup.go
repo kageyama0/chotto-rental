@@ -44,14 +44,14 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 
 	// セッションIDをクッキーにセット
 	c.SetCookie(
-			"session_id",
-			session.ID.String(),
-			// TODO: configで指定するようにする。一旦30日
-			30*24*60*60,
-			"/",
-			"",
-			true,
-			true,
+		"session_id",
+		session.ID.String(),
+		// TODO: configで指定するようにする。一旦30日
+		30*24*60*60,
+		"/",
+		"",
+		true,
+		true,
 	)
 
 	util.CreateResponse(c, http.StatusCreated, e.CREATED, nil)

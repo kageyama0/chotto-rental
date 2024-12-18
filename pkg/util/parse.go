@@ -7,27 +7,26 @@ import (
 )
 
 func parseUUID(input string) (uid *uuid.UUID, MsgCode int) {
-    parsedUUID, err := uuid.Parse(input)
-    if err != nil {
-        return nil, e.INVALID_UUID
-    }
-    return &parsedUUID, e.OK
+	parsedUUID, err := uuid.Parse(input)
+	if err != nil {
+		return nil, e.INVALID_UUID
+	}
+	return &parsedUUID, e.OK
 }
 
 func getUserID(c *gin.Context) (userID *uuid.UUID, MsgCode int) {
-    userIDRaw, exists := c.Get("userID")
-    if !exists {
-        return nil, e.INVALID_USER_ID
-    }
+	userIDRaw, exists := c.Get("userID")
+	if !exists {
+		return nil, e.INVALID_USER_ID
+	}
 
-    userIDStr, ok := userIDRaw.(string)
-    if !ok {
-        return nil, e.INVALID_USER_ID
-    }
+	userIDStr, ok := userIDRaw.(string)
+	if !ok {
+		return nil, e.INVALID_USER_ID
+	}
 
-    return parseUUID(userIDStr)
+	return parseUUID(userIDStr)
 }
-
 
 // -- GetParams: APIの最初の処理として、URLのパラメータとユーザーIDを取得します。
 func GetParams(c *gin.Context, params []string) (map[string]uuid.UUID, *uuid.UUID, int) {

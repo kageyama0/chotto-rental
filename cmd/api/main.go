@@ -50,7 +50,6 @@ func init() {
 	}
 }
 
-
 // @title Chotto Rental API
 // @version 1.0
 // @description ちょっとレンタルサービスのAPI仕様書

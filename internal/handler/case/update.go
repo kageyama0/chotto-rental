@@ -30,7 +30,7 @@ func (h *CaseHandler) Update(c *gin.Context) {
 
 	params, userID, errCode := util.GetParams(c, []string{"case_id"})
 	if errCode != e.OK {
-			util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 	}
 	caseID := params["case_id"]
 

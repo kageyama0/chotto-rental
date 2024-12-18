@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type User = model.User
 type DeviceInfo = model.DeviceInfo
 type AuthHandler struct {

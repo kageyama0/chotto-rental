@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type Matching = model.Matching
 type Application = model.Application
 type Case = model.Case

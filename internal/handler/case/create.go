@@ -24,14 +24,14 @@ func (h *CaseHandler) Create(c *gin.Context) {
 
 	// 案件の作成
 	caseData := model.Case{
-		UserID:         *userID,
-		Title:          req.Title,
-		Description:    req.Description,
-		Reward:         req.Reward,
-		Location:       req.Location,
-		ScheduledDate:  req.ScheduledDate,
+		UserID:          *userID,
+		Title:           req.Title,
+		Description:     req.Description,
+		Reward:          req.Reward,
+		Location:        req.Location,
+		ScheduledDate:   req.ScheduledDate,
 		DurationMinutes: req.DurationMinutes,
-		Status:         "open",
+		Status:          "open",
 	}
 	err := caseRepository.Create(&caseData)
 	if err != nil {

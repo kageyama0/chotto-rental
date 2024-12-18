@@ -29,25 +29,25 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	deviceInfo := DeviceInfo{
-			UserAgent: c.GetHeader("User-Agent"),
-			IP:        c.ClientIP(),
+		UserAgent: c.GetHeader("User-Agent"),
+		IP:        c.ClientIP(),
 	}
 
 	session, errCode := h.authService.Login(c, req.Email, req.Password, deviceInfo)
 	if errCode != e.OK {
-			util.CreateResponse(c, http.StatusUnauthorized, errCode, nil)
-			return
+		util.CreateResponse(c, http.StatusUnauthorized, errCode, nil)
+		return
 	}
 
 	// セッションIDをクッキーにセット
 	c.SetCookie(
-			"session_id",
-			session.ID.String(),
-			30*24*60*60, // 30日
-			"/",
-			"",
-			true,
-			true,
+		"session_id",
+		session.ID.String(),
+		30*24*60*60, // 30日
+		"/",
+		"",
+		true,
+		true,
 	)
 
 	util.CreateResponse(c, http.StatusOK, e.OK, nil)

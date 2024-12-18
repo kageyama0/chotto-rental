@@ -16,9 +16,8 @@ func (r *CaseRepository) FindByID(id uuid.UUID) (*Case, error) {
 	return &c, nil
 }
 
-
 // -- FindAll: すべての案件を取得
-func (r *CaseRepository) FindAll() ([]Case, error){
+func (r *CaseRepository) FindAll() ([]Case, error) {
 	var cases []Case
 
 	err := r.db.Preload("User").Find(&cases).Error

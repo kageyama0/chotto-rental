@@ -10,10 +10,10 @@ import (
 func NewAuthService(db *gorm.DB, config *config.AuthConfig) *AuthService {
 	userRepository := user_repository.NewUserRepository(db)
 	sessionRepository := session_repository.NewSessionRepository(db)
-    return &AuthService{
-			  db:                 db,
-				sessionRepository:  sessionRepository,
-				userRepository:     userRepository,
-				config:             config,
-			}
+	return &AuthService{
+		db:                db,
+		sessionRepository: sessionRepository,
+		userRepository:    userRepository,
+		config:            config,
+	}
 }

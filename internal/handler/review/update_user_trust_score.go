@@ -5,7 +5,6 @@ import (
 	"github.com/kageyama0/chotto-rental/internal/model"
 )
 
-
 func (h *ReviewHandler) updateUserTrustScore(userID uuid.UUID) error {
 	var averageScore float64
 	err := h.db.Model(&model.Review{}).

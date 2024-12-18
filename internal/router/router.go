@@ -24,12 +24,12 @@ func SetupRouter(db *gorm.DB, config *config.Config) *gin.Engine {
 
 	// dev用の設定
 	r.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:3000"}, // フロントエンドのURL
-			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-			ExposeHeaders:    []string{"Content-Length"},
-			AllowCredentials: true,
-			MaxAge:           12 * time.Hour,
+		AllowOrigins:     []string{"http://localhost:3000"}, // フロントエンドのURL
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	authService := auth_service.NewAuthService(db, &config.Auth)

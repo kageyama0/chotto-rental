@@ -5,8 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type Session = model.Session
 type SessionRepository struct {
-    db *gorm.DB
+	db *gorm.DB
 }

@@ -13,7 +13,6 @@ type UpdateUserRequest struct {
 	DisplayName string `json:"displayName" binding:"required"`
 }
 
-
 // @Summary ユーザー情報更新
 // @Description ログインユーザーの表示名を更新します
 // @Tags ユーザー

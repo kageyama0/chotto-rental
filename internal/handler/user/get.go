@@ -31,7 +31,7 @@ func (h *UserHandler) Get(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "ユーザーが見つかりません"})
 		return
 	}
-	
+
 	util.CreateResponse(c, http.StatusOK, e.OK, map[string]interface{}{
 		"user": user,
 	})

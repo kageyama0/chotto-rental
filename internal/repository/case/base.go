@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
 type Case = model.Case
 type CaseRepository struct {
 	db *gorm.DB

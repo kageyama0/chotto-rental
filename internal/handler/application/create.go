@@ -11,7 +11,6 @@ import (
 	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
-
 type CreateApplicationRequest struct {
 	Message string `json:"message"`
 }

@@ -8,18 +8,16 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepository = user_repository.UserRepository
+type SessionRepository = session_repository.SessionRepository
+type AuthConfig = config.AuthConfig
 
-type UserRepository = user_repository.UserRepository;
-type SessionRepository = session_repository.SessionRepository;
-type AuthConfig = config.AuthConfig;
-
-type Session = model.Session;
-type User = model.User;
-type DeviceInfo = model.DeviceInfo;
-
+type Session = model.Session
+type User = model.User
+type DeviceInfo = model.DeviceInfo
 
 type AuthService struct {
-	db					      *gorm.DB
+	db                *gorm.DB
 	sessionRepository *SessionRepository
 	userRepository    *UserRepository
 	config            *AuthConfig

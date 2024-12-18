@@ -10,27 +10,27 @@ import (
 )
 
 func (h *AuthHandler) Refresh(c *gin.Context) {
-    sessionID, err := c.Cookie("session_id")
-    if err != nil {
-				util.CreateResponse(c, http.StatusUnauthorized, e.INVALID_SESSION_ID, nil)
-				return
-    }
+	sessionID, err := c.Cookie("session_id")
+	if err != nil {
+		util.CreateResponse(c, http.StatusUnauthorized, e.INVALID_SESSION_ID, nil)
+		return
+	}
 
-    deviceInfo := DeviceInfo{
-        UserAgent: c.GetHeader("User-Agent"),
-        IP:        c.ClientIP(),
-    }
+	deviceInfo := DeviceInfo{
+		UserAgent: c.GetHeader("User-Agent"),
+		IP:        c.ClientIP(),
+	}
 
-		parsedSessionID, err := uuid.Parse(sessionID)
-		if err != nil {
-				util.CreateResponse(c, http.StatusBadRequest, e.INVALID_SESSION_ID, nil)
-				return
-		}
+	parsedSessionID, err := uuid.Parse(sessionID)
+	if err != nil {
+		util.CreateResponse(c, http.StatusBadRequest, e.INVALID_SESSION_ID, nil)
+		return
+	}
 
-    statusCode, errCode := h.authService.Refresh(c, parsedSessionID, deviceInfo)
-    if errCode != e.OK {
-				util.CreateResponse(c, statusCode, errCode, nil)
-    }
+	statusCode, errCode := h.authService.Refresh(c, parsedSessionID, deviceInfo)
+	if errCode != e.OK {
+		util.CreateResponse(c, statusCode, errCode, nil)
+	}
 
-		util.CreateResponse(c, http.StatusOK, e.OK, gin.H{})
+	util.CreateResponse(c, http.StatusOK, e.OK, gin.H{})
 }
