@@ -4,17 +4,17 @@ definitions:
     description: 応募情報
     properties:
       applicant:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       applicantID:
         type: string
       case:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case'
       caseID:
         type: string
       createdAt:
         type: string
       deletedAt:
-        $ref: "#/definitions/gorm.DeletedAt"
+        $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: string
       message:
@@ -30,7 +30,7 @@ definitions:
       createdAt:
         type: string
       deletedAt:
-        $ref: "#/definitions/gorm.DeletedAt"
+        $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
       durationMinutes:
@@ -50,7 +50,7 @@ definitions:
       updatedAt:
         type: string
       user:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       userID:
         description: 案件の依頼者
         type: string
@@ -65,15 +65,15 @@ definitions:
       arrivalConfirmedByRequester:
         type: boolean
       case:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case'
       caseID:
         type: string
       createdAt:
         type: string
       deletedAt:
-        $ref: "#/definitions/gorm.DeletedAt"
+        $ref: '#/definitions/gorm.DeletedAt'
       helper:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       helperID:
         description: 案件を受けたユーザー
         type: string
@@ -82,7 +82,7 @@ definitions:
       meetingLocation:
         type: string
       requester:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       requesterID:
         description: 案件の依頼者
         type: string
@@ -99,20 +99,20 @@ definitions:
       createdAt:
         type: string
       deletedAt:
-        $ref: "#/definitions/gorm.DeletedAt"
+        $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: string
       matching:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching'
       matchingID:
         type: string
       reviewedUser:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       reviewedUserID:
         description: レビューを書かれたユーザー
         type: string
       reviewer:
-        $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.User"
+        $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.User'
       reviewerID:
         description: レビューを書いたユーザー
         type: string
@@ -127,7 +127,7 @@ definitions:
       createdAt:
         type: string
       deletedAt:
-        $ref: "#/definitions/gorm.DeletedAt"
+        $ref: '#/definitions/gorm.DeletedAt'
       displayName:
         type: string
       email:
@@ -146,8 +146,6 @@ definitions:
   github_com_kageyama0_chotto-rental_pkg_util.Response:
     description: HTTPレスポンス
     properties:
-      code:
-        type: integer
       data: {}
       msg:
         type: string
@@ -162,28 +160,18 @@ definitions:
     type: object
   internal_handler_application.CreateApplicationRequest:
     properties:
-      case_id:
-        type: string
       message:
         type: string
-    required:
-      - case_id
     type: object
   internal_handler_application.UpdateApplicationStatusRequest:
     properties:
       status:
         enum:
-          - accepted
-          - rejected
+        - accepted
+        - rejected
         type: string
     required:
-      - status
-    type: object
-  internal_handler_auth.AuthResponse:
-    properties:
-      token:
-        type: string
-      user: {}
+    - status
     type: object
   internal_handler_auth.LoginRequest:
     description: ログインリクエスト
@@ -193,13 +181,13 @@ definitions:
       password:
         type: string
     required:
-      - email
-      - password
+    - email
+    - password
     type: object
   internal_handler_auth.SignupRequest:
     description: ユーザー登録リクエスト
     properties:
-      display_name:
+      displayName:
         type: string
       email:
         type: string
@@ -207,15 +195,15 @@ definitions:
         minLength: 8
         type: string
     required:
-      - display_name
-      - email
-      - password
+    - displayName
+    - email
+    - password
     type: object
   internal_handler_case.CreateCaseRequest:
     properties:
       description:
         type: string
-      duration_minutes:
+      durationMinutes:
         minimum: 1
         type: integer
       location:
@@ -223,51 +211,45 @@ definitions:
       reward:
         minimum: 0
         type: integer
-      scheduled_date:
+      scheduledDate:
         type: string
       title:
         type: string
     required:
-      - description
-      - duration_minutes
-      - location
-      - reward
-      - scheduled_date
-      - title
+    - description
+    - durationMinutes
+    - location
+    - reward
+    - scheduledDate
+    - title
     type: object
   internal_handler_matching.CreateMatchingRequest:
     properties:
-      application_id:
-        type: string
-      meeting_location:
+      meetingLocation:
         type: string
     required:
-      - application_id
-      - meeting_location
+    - meetingLocation
     type: object
   internal_handler_review.CreateReviewRequest:
     properties:
       comment:
         type: string
-      matching_id:
-        type: string
-      reviewed_user_id:
+      reviewedUserId:
         type: string
       score:
         maximum: 5
         minimum: 1
         type: integer
     required:
-      - matching_id
-      - reviewed_user_id
-      - score
+    - reviewedUserId
+    - score
     type: object
   internal_handler_user.UpdateUserRequest:
     properties:
-      display_name:
+      displayName:
         type: string
     required:
-      - display_name
+    - displayName
     type: object
 host: localhost:8080
 info:
@@ -279,417 +261,489 @@ paths:
   /applications:
     get:
       consumes:
-        - application/json
+      - application/json
       description: ユーザーの全ての応募履歴を案件情報と共に取得します
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 応募一覧の取得成功
           schema:
             items:
-              $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Application"
+              $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Application'
             type: array
         "400":
           description: 無効なパラメータ
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: 応募一覧取得
       tags:
-        - 応募
+      - 応募
   /applications/{application_id}/matching:
     post:
       consumes:
-        - application/json
+      - application/json
       description: 応募を承認してマッチングを作成します。応募のステータスを「accepted」に、案件のステータスを「matched」に更新します。
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: 応募ID
-          in: path
-          name: application_id
-          required: true
-          type: string
-        - description: マッチング作成情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_matching.CreateMatchingRequest"
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 応募ID
+        in: path
+        name: application_id
+        required: true
+        type: string
+      - description: マッチング作成情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_matching.CreateMatchingRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
             allOf:
-              - $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-              - properties:
-                  data:
-                    $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching"
-                type: object
+            - $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching'
+              type: object
         "400":
           description: リクエストが不正です
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "403":
           description: この操作を行う権限がありません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: 案件が見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: マッチング作成
       tags:
-        - マッチング
+      - マッチング
   /applications/{application_id}/status:
     put:
       consumes:
-        - application/json
+      - application/json
       description: 応募のステータスを更新します（案件作成者のみ可能）
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: 応募ID
-          in: path
-          name: application_id
-          required: true
-          type: string
-        - description: 更新するステータス情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_application.UpdateApplicationStatusRequest"
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 応募ID
+        in: path
+        name: application_id
+        required: true
+        type: string
+      - description: 更新するステータス情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_application.UpdateApplicationStatusRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Application"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Application'
         "400":
           description: 無効なパラメータ
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "403":
           description: この応募のステータスを更新する権限がありません",
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: 応募が見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: 応募ステータス更新
       tags:
-        - 応募
+      - 応募
   /auth/login:
     post:
       consumes:
-        - application/json
+      - application/json
       description: メールアドレスとパスワードで認証し、トークンを発行します
       parameters:
-        - description: ログイン情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_auth.LoginRequest"
+      - description: ログイン情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_auth.LoginRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: ログイン成功
           schema:
-            allOf:
-              - $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-              - properties:
-                  data:
-                    $ref: "#/definitions/internal_handler_auth.AuthResponse"
-                type: object
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "400":
           description: 無効なパラメータ
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: メールアドレスまたはパスワードが間違っています
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ログイン
       tags:
-        - 認証
+      - 認証
   /auth/signup:
     post:
       consumes:
-        - application/json
+      - application/json
       description: 新規ユーザーを登録し、認証トークンを発行します
       parameters:
-        - description: 登録情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_auth.SignupRequest"
+      - description: 登録情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_auth.SignupRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: 登録成功
           schema:
-            allOf:
-              - $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-              - properties:
-                  data:
-                    $ref: "#/definitions/internal_handler_auth.AuthResponse"
-                type: object
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "400":
           description: 無効なパラメータ
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "409":
           description: メールアドレスが既に使用されています
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ユーザー登録
       tags:
-        - 認証
+      - 認証
+  /cases:
+    get:
+      consumes:
+      - application/json
+      description: 全ての案件情報を取得します
+      parameters:
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 案件一覧
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    items:
+                      $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case'
+                    type: array
+                  type: object
+              type: object
+        "401":
+          description: 認証エラー
+          schema:
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+        "500":
+          description: サーバーエラー
+          schema:
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+      summary: 案件一覧取得
+      tags:
+      - 案件
   /cases/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDの案件情報を取得します
+      parameters:
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 案件ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 案件情報
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case'
+                  type: object
+              type: object
+        "400":
+          description: リクエストが不正です
+          schema:
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+        "401":
+          description: 認証エラー
+          schema:
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+        "404":
+          description: 案件が見つかりません
+          schema:
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+      summary: 案件詳細取得
+      tags:
+      - 案件
     put:
       consumes:
-        - application/json
+      - application/json
       description: 指定された案件の情報を更新します（案件作成者のみ可能）
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: 案件ID
-          in: path
-          name: id
-          required: true
-          type: string
-        - description: 更新する案件情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_case.CreateCaseRequest"
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 案件ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 更新する案件情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_case.CreateCaseRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case'
         "400":
           description: リクエストが不正です
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "403":
           description: この操作を行う権限がありません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: 案件が見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: 案件更新
       tags:
-        - 案件
+      - 案件
   /matchings/{id}/confirm-arrival:
     post:
       consumes:
-        - application/json
+      - application/json
       description: マッチング成立後の到着確認を行います。依頼者とヘルパー両方の確認が完了すると、マッチングが完了状態になります。
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: マッチングID
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: マッチングID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             allOf:
-              - $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-              - properties:
-                  data:
-                    $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching"
-                type: object
+            - $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Matching'
+              type: object
         "400":
           description: リクエストが不正です / この案件は募集を終了しています / 確認期限が過ぎています
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "403":
           description: この操作を行う権限がありません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: Not Found
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: 到着確認
       tags:
-        - マッチング
+      - マッチング
   /reviews:
     get:
       consumes:
-        - application/json
+      - application/json
       description: ユーザーのレビュー一覧を取得します。user_idクエリパラメータを指定すると、特定のユーザーに対するレビューのみを取得します。
       parameters:
-        - description: ユーザーID（指定しない場合は全レビューを取得）
-          in: query
-          name: user_id
-          type: string
+      - description: ユーザーID（指定しない場合は全レビューを取得）
+        in: query
+        name: user_id
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: レビュー一覧
           schema:
             items:
-              $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review"
+              $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review'
             type: array
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: レビュー一覧取得
       tags:
-        - レビュー
+      - レビュー
     post:
       consumes:
-        - application/json
+      - application/json
       description: マッチング完了後、相手ユーザーへのレビューを作成します。1つのマッチングにつき1人のユーザーは1回のみレビュー可能です。
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: レビュー情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_review.CreateReviewRequest"
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: レビュー情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_review.CreateReviewRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: レビュー作成成功
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review'
         "400":
           description: リクエストが不正です / 完了していないマッチングにはレビューできません / このマッチングに関係のないユーザーにレビューはできません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "403":
           description: このマッチングにレビューを投稿する権限がありません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: マッチングが見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "409":
           description: 既にレビューを投稿済みです
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー / 信頼スコアの更新に失敗しました
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: レビュー作成
       tags:
-        - レビュー
+      - レビュー
   /users/{id}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: ユーザーIDに基づいてユーザーの基本情報を取得します
       parameters:
-        - description: ユーザーID
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: ユーザーID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: ユーザー情報
@@ -699,96 +753,96 @@ paths:
         "400":
           description: 無効なユーザーID
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: ユーザーが見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ユーザー情報取得
       tags:
-        - ユーザー
+      - ユーザー
   /users/{id}/reviews:
     get:
       consumes:
-        - application/json
+      - application/json
       description: 指定されたユーザーが受け取ったレビューの一覧を取得します
       parameters:
-        - description: ユーザーID
-          in: path
-          name: id
-          required: true
-          type: string
+      - description: ユーザーID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: レビュー一覧
           schema:
             items:
-              $ref: "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review"
+              $ref: '#/definitions/github_com_kageyama0_chotto-rental_internal_model.Review'
             type: array
         "400":
           description: 無効なユーザーID
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ユーザーのレビュー一覧取得
       tags:
-        - ユーザー
+      - ユーザー
   /users/me:
     delete:
       consumes:
-        - application/json
+      - application/json
       description: ユーザーと関連する全てのデータ（レビュー、マッチング、応募、案件）を削除します
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "400":
           description: リクエストが不正です
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ユーザー削除
       tags:
-        - ユーザー
+      - ユーザー
     put:
       consumes:
-        - application/json
+      - application/json
       description: ログインユーザーの表示名を更新します
       parameters:
-        - description: Bearer {token} 形式
-          in: header
-          name: Authorization
-          required: true
-          type: string
-        - description: 更新するユーザー情報
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/internal_handler_user.UpdateUserRequest"
+      - description: Bearer {token} 形式
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 更新するユーザー情報
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_user.UpdateUserRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: 更新後のユーザー情報
@@ -798,22 +852,22 @@ paths:
         "400":
           description: リクエストが不正です
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "401":
           description: 認証エラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "404":
           description: ユーザーが見つかりません
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
         "500":
           description: サーバーエラー
           schema:
-            $ref: "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+            $ref: '#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response'
       summary: ユーザー情報更新
       tags:
-        - ユーザー
+      - ユーザー
 securityDefinitions:
   Bearer:
     description: 「Bearer 」の後にJWTトークンを付与してください

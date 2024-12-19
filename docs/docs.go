@@ -264,19 +264,7 @@ const docTemplate = `{
                     "200": {
                         "description": "ログイン成功",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/internal_handler_auth.AuthResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
                         }
                     },
                     "400": {
@@ -328,19 +316,7 @@ const docTemplate = `{
                     "201": {
                         "description": "登録成功",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/internal_handler_auth.AuthResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
                         }
                     },
                     "400": {
@@ -364,7 +340,139 @@ const docTemplate = `{
                 }
             }
         },
+        "/cases": {
+            "get": {
+                "description": "全ての案件情報を取得します",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "案件"
+                ],
+                "summary": "案件一覧取得",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token} 形式",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "案件一覧",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "認証エラー",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "サーバーエラー",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/cases/{id}": {
+            "get": {
+                "description": "指定されたIDの案件情報を取得します",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "案件"
+                ],
+                "summary": "案件詳細取得",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token} 形式",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "案件ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "案件情報",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "$ref": "#/definitions/github_com_kageyama0_chotto-rental_internal_model.Case"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "リクエストが不正です",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "認証エラー",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "案件が見つかりません",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kageyama0_chotto-rental_pkg_util.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "指定された案件の情報を更新します（案件作成者のみ可能）",
                 "consumes": [
@@ -1062,9 +1170,6 @@ const docTemplate = `{
             "description": "HTTPレスポンス",
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
-                },
                 "data": {},
                 "msg": {
                     "type": "string"
@@ -1085,13 +1190,7 @@ const docTemplate = `{
         },
         "internal_handler_application.CreateApplicationRequest": {
             "type": "object",
-            "required": [
-                "case_id"
-            ],
             "properties": {
-                "case_id": {
-                    "type": "string"
-                },
                 "message": {
                     "type": "string"
                 }
@@ -1110,15 +1209,6 @@ const docTemplate = `{
                         "rejected"
                     ]
                 }
-            }
-        },
-        "internal_handler_auth.AuthResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                },
-                "user": {}
             }
         },
         "internal_handler_auth.LoginRequest": {
@@ -1141,12 +1231,12 @@ const docTemplate = `{
             "description": "ユーザー登録リクエスト",
             "type": "object",
             "required": [
-                "display_name",
+                "displayName",
                 "email",
                 "password"
             ],
             "properties": {
-                "display_name": {
+                "displayName": {
                     "type": "string"
                 },
                 "email": {
@@ -1162,17 +1252,17 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "description",
-                "duration_minutes",
+                "durationMinutes",
                 "location",
                 "reward",
-                "scheduled_date",
+                "scheduledDate",
                 "title"
             ],
             "properties": {
                 "description": {
                     "type": "string"
                 },
-                "duration_minutes": {
+                "durationMinutes": {
                     "type": "integer",
                     "minimum": 1
                 },
@@ -1183,7 +1273,7 @@ const docTemplate = `{
                     "type": "integer",
                     "minimum": 0
                 },
-                "scheduled_date": {
+                "scheduledDate": {
                     "type": "string"
                 },
                 "title": {
@@ -1194,14 +1284,10 @@ const docTemplate = `{
         "internal_handler_matching.CreateMatchingRequest": {
             "type": "object",
             "required": [
-                "application_id",
-                "meeting_location"
+                "meetingLocation"
             ],
             "properties": {
-                "application_id": {
-                    "type": "string"
-                },
-                "meeting_location": {
+                "meetingLocation": {
                     "type": "string"
                 }
             }
@@ -1209,18 +1295,14 @@ const docTemplate = `{
         "internal_handler_review.CreateReviewRequest": {
             "type": "object",
             "required": [
-                "matching_id",
-                "reviewed_user_id",
+                "reviewedUserId",
                 "score"
             ],
             "properties": {
                 "comment": {
                     "type": "string"
                 },
-                "matching_id": {
-                    "type": "string"
-                },
-                "reviewed_user_id": {
+                "reviewedUserId": {
                     "type": "string"
                 },
                 "score": {
@@ -1233,10 +1315,10 @@ const docTemplate = `{
         "internal_handler_user.UpdateUserRequest": {
             "type": "object",
             "required": [
-                "display_name"
+                "displayName"
             ],
             "properties": {
-                "display_name": {
+                "displayName": {
                     "type": "string"
                 }
             }

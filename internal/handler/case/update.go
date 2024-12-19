@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/kageyama0/chotto-rental/internal/model"
 	case_repository "github.com/kageyama0/chotto-rental/internal/repository/case"
 	"github.com/kageyama0/chotto-rental/pkg/e"
 	"github.com/kageyama0/chotto-rental/pkg/util"

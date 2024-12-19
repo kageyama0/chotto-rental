@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param request body SignupRequest true "登録情報"
-// @Success 201 {object} util.Response{data=AuthResponse} "登録成功"
+// @Success 201 {object} util.Response "登録成功"
 // @Failure 400 {object} util.Response "無効なパラメータ"
 // @Failure 409 {object} util.Response "メールアドレスが既に使用されています"
 // @Failure 500 {object} util.Response "サーバーエラー"

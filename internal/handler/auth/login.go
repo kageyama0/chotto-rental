@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param request body LoginRequest true "ログイン情報"
-// @Success 200 {object} util.Response{data=AuthResponse} "ログイン成功"
+// @Success 200 {object} util.Response "ログイン成功"
 // @Failure 400 {object} util.Response "無効なパラメータ"
 // @Failure 401 {object} util.Response "メールアドレスまたはパスワードが間違っています"
 // @Failure 500 {object} util.Response "サーバーエラー"
