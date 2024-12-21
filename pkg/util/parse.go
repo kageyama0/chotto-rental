@@ -14,18 +14,13 @@ func parseUUID(input string) (uid *uuid.UUID, MsgCode int) {
 	return &parsedUUID, e.OK
 }
 
-func getUserID(c *gin.Context) (userID *uuid.UUID, MsgCode int) {
+func getUserID(c *gin.Context) (userID *uuid.UUID, errCode int) {
 	userIDRaw, exists := c.Get("userID")
 	if !exists {
 		return nil, e.INVALID_USER_ID
 	}
 
-	userIDStr, ok := userIDRaw.(string)
-	if !ok {
-		return nil, e.INVALID_USER_ID
-	}
-
-	return parseUUID(userIDStr)
+	return userIDRaw.(*uuid.UUID), e.OK
 }
 
 // -- GetParams: APIの最初の処理として、URLのパラメータとユーザーIDを取得します。
@@ -48,5 +43,3 @@ func GetParams(c *gin.Context, params []string) (map[string]uuid.UUID, *uuid.UUI
 
 	return parsedParams, userID, e.OK
 }
-
-// -- parseJson

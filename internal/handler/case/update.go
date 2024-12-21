@@ -48,10 +48,15 @@ func (h *CaseHandler) Update(c *gin.Context) {
 
 	caseData.Title = req.Title
 	caseData.Description = req.Description
+	caseData.Category = req.Category
 	caseData.Reward = req.Reward
-	caseData.Location = req.Location
+	caseData.RequiredPeople = req.RequiredPeople
 	caseData.ScheduledDate = req.ScheduledDate
-	caseData.DurationMinutes = req.DurationMinutes
+	caseData.StartTime = req.StartTime
+	caseData.Duration = req.Duration
+	caseData.Prefecture = req.Prefecture
+	caseData.City = req.City
+	caseData.Address = req.Address
 
 	if err := h.db.Save(&caseData).Error; err != nil {
 		util.CreateResponse(c, http.StatusInternalServerError, e.SERVER_ERROR, nil)

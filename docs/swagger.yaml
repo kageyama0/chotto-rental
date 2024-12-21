@@ -27,21 +27,32 @@ definitions:
   github_com_kageyama0_chotto-rental_internal_model.Case:
     description: 案件情報
     properties:
+      address:
+        type: string
+      category:
+        type: string
+      city:
+        type: string
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
-      durationMinutes:
+      duration:
+        description: 分単位
         type: integer
       id:
         type: string
-      location:
+      prefecture:
         type: string
+      requiredPeople:
+        type: integer
       reward:
         type: integer
       scheduledDate:
+        type: string
+      startTime:
         type: string
       status:
         type: string
@@ -201,26 +212,46 @@ definitions:
     type: object
   internal_handler_case.CreateCaseRequest:
     properties:
-      description:
+      address:
         type: string
-      durationMinutes:
+      category:
+        type: string
+      city:
+        type: string
+      description:
+        maxLength: 2000
+        type: string
+      duration:
+        maximum: 360
+        minimum: 15
+        type: integer
+      prefecture:
+        type: string
+      requiredPeople:
+        maximum: 10
         minimum: 1
         type: integer
-      location:
-        type: string
       reward:
-        minimum: 0
+        maximum: 100000
+        minimum: 500
         type: integer
       scheduledDate:
         type: string
+      startTime:
+        type: string
       title:
+        maxLength: 100
         type: string
     required:
+    - category
+    - city
     - description
-    - durationMinutes
-    - location
+    - duration
+    - prefecture
+    - requiredPeople
     - reward
     - scheduledDate
+    - startTime
     - title
     type: object
   internal_handler_matching.CreateMatchingRequest:

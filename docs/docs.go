@@ -994,6 +994,15 @@ const docTemplate = `{
             "description": "案件情報",
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -1003,19 +1012,26 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "durationMinutes": {
+                "duration": {
+                    "description": "分単位",
                     "type": "integer"
                 },
                 "id": {
                     "type": "string"
                 },
-                "location": {
+                "prefecture": {
                     "type": "string"
+                },
+                "requiredPeople": {
+                    "type": "integer"
                 },
                 "reward": {
                     "type": "integer"
                 },
                 "scheduledDate": {
+                    "type": "string"
+                },
+                "startTime": {
                     "type": "string"
                 },
                 "status": {
@@ -1251,33 +1267,58 @@ const docTemplate = `{
         "internal_handler_case.CreateCaseRequest": {
             "type": "object",
             "required": [
+                "category",
+                "city",
                 "description",
-                "durationMinutes",
-                "location",
+                "duration",
+                "prefecture",
+                "requiredPeople",
                 "reward",
                 "scheduledDate",
+                "startTime",
                 "title"
             ],
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 2000
                 },
-                "durationMinutes": {
+                "duration": {
                     "type": "integer",
-                    "minimum": 1
+                    "maximum": 360,
+                    "minimum": 15
                 },
-                "location": {
+                "prefecture": {
                     "type": "string"
+                },
+                "requiredPeople": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 1
                 },
                 "reward": {
                     "type": "integer",
-                    "minimum": 0
+                    "maximum": 100000,
+                    "minimum": 500
                 },
                 "scheduledDate": {
                     "type": "string"
                 },
-                "title": {
+                "startTime": {
                     "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },

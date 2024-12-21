@@ -11,12 +11,12 @@ import (
 
 func AuthMiddleware(authService auth_service.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		_, errCode := authService.GetUserIDBySessionID(c)
+		userID, errCode := authService.GetUserIDBySessionID(c)
 		if errCode != e.OK {
 			util.CreateResponse(c, http.StatusUnauthorized, errCode, nil)
 			return
 		}
-
+		c.Set("userID", userID)
 		c.Next()
 	}
 }

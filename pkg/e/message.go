@@ -25,6 +25,7 @@ var MsgFlags = map[int]string{
 	SESSION_EXPIRED:           "セッションが期限切れです",
 	INVALID_DEVICE:            "無効なデバイスです",
 	INVALID_SESSION_ID:        "無効なセッションIDを使用しています",
+	INVALID_SESSION:           "無効なセッションです",
 
 	// 403系エラーメッセージ
 	FORBIDDEN:                    "この操作を行う権限がありません",
@@ -40,6 +41,7 @@ var MsgFlags = map[int]string{
 	NOT_FOUND_REVIEW:      "レビューが見つかりません",
 	NOT_FOUND_MATCHING:    "マッチングが見つかりません",
 	NOT_FOUND_SESSION:     "セッションが見つかりません",
+	NOT_FOUND_SESSION_ID:  "セッションIDが見つかりません",
 
 	// 409系エラーメッセージ
 	ALREADY_APPLIED:          "既にこの案件に応募しています",
