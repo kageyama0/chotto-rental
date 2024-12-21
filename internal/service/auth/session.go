@@ -37,5 +37,7 @@ func (s *AuthService) GetUserIDBySessionID(c *gin.Context) (userID *uuid.UUID, e
 		return nil, e.INVALID_SESSION
 	}
 
+	userID = &session.UserID
+
 	return userID, e.OK
 }

@@ -16,7 +16,7 @@ func AuthMiddleware(authService auth_service.AuthService) gin.HandlerFunc {
 			util.CreateResponse(c, http.StatusUnauthorized, errCode, nil)
 			return
 		}
-		c.Set("userID", userID)
+		c.Set("userID", *userID)
 		c.Next()
 	}
 }
