@@ -1,8 +1,6 @@
 package util
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kageyama0/chotto-rental/pkg/e"
@@ -18,7 +16,6 @@ func parseUUID(input string) (uid *uuid.UUID, MsgCode int) {
 
 func getUserID(c *gin.Context) (userID *uuid.UUID, errCode int) {
 	userIDRaw, exists := c.Get("userID")
-	log.Println("userIDRaw", userIDRaw)
 	if !exists {
 		return nil, e.INVALID_USER_ID
 	}

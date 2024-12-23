@@ -43,7 +43,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.SetCookie(
 		"session_id",
 		session.ID.String(),
-		30*24*60*60, // 30日
+		30*24*60*60, // TODO: configで設定する。30日
 		"/",
 		"",
 		true,
