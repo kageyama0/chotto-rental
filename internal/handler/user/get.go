@@ -33,7 +33,5 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	util.CreateResponse(c, http.StatusOK, e.OK, map[string]interface{}{
-		"user": user,
-	})
+	util.CreateResponse(c, http.StatusOK, e.OK, util.StructToMap(user))
 }
