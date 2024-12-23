@@ -4,17 +4,17 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/kageyama0/chotto-rental/internal/model"
-	_ "github.com/kageyama0/chotto-rental/pkg/util"
+	user_repository "github.com/kageyama0/chotto-rental/internal/repository/user"
+	"github.com/kageyama0/chotto-rental/pkg/e"
+	"github.com/kageyama0/chotto-rental/pkg/util"
 )
 
 type UpdateUserRequest struct {
 	DisplayName string `json:"displayName" binding:"required"`
 }
 
-// @Summary ユーザー情報更新
-// @Description ログインユーザーの表示名を更新します
+// @Summary ユーザーのプロフィール情報を更新
+// @Description ユーザーのプロフィール情報を更新します
 // @Tags ユーザー
 // @Accept json
 // @Produce json
@@ -25,33 +25,34 @@ type UpdateUserRequest struct {
 // @Failure 401 {object} util.Response "認証エラー"
 // @Failure 404 {object} util.Response "ユーザーが見つかりません"
 // @Failure 500 {object} util.Response "サーバーエラー"
-// @Router /users/me [put]
-func (h *UserHandler) Update(c *gin.Context) {
-	userID, _ := c.Get("userID")
-	uid, _ := uuid.Parse(userID.(string))
-
+// @Router /profile [put]
+func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	var req UpdateUserRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	userRepository := user_repository.NewUserRepository(h.db)
+
+	_, userID, errCode := util.GetParams(c, []string{})
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusBadRequest, errCode, nil)
 		return
 	}
 
-	var user model.User
-	if err := h.db.First(&user, "id = ?", uid).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "ユーザーが見つかりません"})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		util.CreateResponse(c, http.StatusBadRequest, e.JSON_PARSE_ERROR, nil)
+		return
+	}
+
+	user, errCode := userRepository.FindByID(*userID)
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusNotFound, e.NOT_FOUND_USER, nil)
 		return
 	}
 
 	user.DisplayName = req.DisplayName
-	if err := h.db.Save(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "ユーザー情報の更新に失敗しました"})
+	errCode = userRepository.Update(*userID, user)
+	if errCode != e.OK {
+		util.CreateResponse(c, http.StatusInternalServerError, errCode, nil)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"id":           user.ID,
-		"email":        user.Email,
-		"display_name": user.DisplayName,
-		"trust_score":  user.TrustScore,
-	})
+	util.CreateResponse(c, http.StatusOK, e.OK, util.StructToMap(user))
 }

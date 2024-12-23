@@ -25,10 +25,10 @@ func (s *AuthService) GetUserIDBySessionID(c *gin.Context) (userID *uuid.UUID, e
 	}
 
 	// セッションの検証
-	session, err := s.sessionRepository.FindByID(parsedSessionID)
-	if err != nil {
+	session, errCode := s.sessionRepository.FindByID(parsedSessionID)
+	if errCode != e.OK {
 		c.Abort()
-		return nil, e.NOT_FOUND_SESSION
+		return nil, errCode
 	}
 
 	// セッションの有効性チェック

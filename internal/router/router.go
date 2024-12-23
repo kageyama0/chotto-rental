@@ -56,10 +56,14 @@ func SetupRouter(db *gorm.DB, config *config.Config) *gin.Engine {
 		// 認証が必要なエンドポイント
 		auth := api.Group("", middleware.AuthMiddleware(*authService))
 		{
+			profile := auth.Group("/profile")
+			{
+				profile.GET("", userHandler.GetProfile)
+				profile.PUT("", userHandler.UpdateProfile)
+			}
+
 			users := auth.Group("/users")
 			{
-				users.GET("/:id", userHandler.Get)
-				users.PUT("/:id", userHandler.Update)
 				users.DELETE("/:id", userHandler.Delete)
 				users.GET("/:id/reviews", userHandler.ListByUser)
 			}

@@ -10,9 +10,9 @@ import (
 )
 
 func (s *AuthService) Refresh(c *gin.Context, sessionID uuid.UUID, deviceInfo DeviceInfo) (statusCode int, errCode int) {
-	session, err := s.sessionRepository.FindByID(sessionID)
-	if err != nil {
-		return http.StatusUnauthorized, e.NOT_FOUND_SESSION
+	session, errCode := s.sessionRepository.FindByID(sessionID)
+	if errCode != e.OK {
+		return http.StatusUnauthorized, errCode
 	}
 
 	// セッションの有効期限チェック
@@ -27,12 +27,9 @@ func (s *AuthService) Refresh(c *gin.Context, sessionID uuid.UUID, deviceInfo De
 		return http.StatusUnauthorized, e.INVALID_DEVICE
 	}
 
-	user, err := s.userRepository.FindByID(session.UserID)
-	if err != nil {
-		return http.StatusInternalServerError, e.SERVER_ERROR
-	}
-	if user == nil {
-		return http.StatusUnauthorized, e.NOT_FOUND_USER
+	_, errCode = s.userRepository.FindByID(session.UserID)
+	if errCode != e.OK {
+		return http.StatusInternalServerError, errCode
 	}
 
 	return http.StatusOK, e.OK
